@@ -1,0 +1,20 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Original and derived personal data never belongs in Git.
+iCloud/
+texts/
+data/
+artifacts/
+
+# Local credentials, databases, logs, and editor state.
+.env
+.env.*
+*.sqlite
+*.sqlite3
+*.db
+*.log
+.DS_Store
+.idea/
+.vscode/

@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.digital-mirror/schemas/historical_episode.schema.json",
+  "title": "Digital Mirror Historical Episode",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "episode_id",
+    "domain",
+    "split",
+    "leakage_group",
+    "decision",
+    "persona_state",
+    "evidence",
+    "labels"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "episode_id": {"type": "string", "minLength": 1},
+    "domain": {
+      "enum": [
+        "relationship",
+        "family",
+        "learning",
+        "career",
+        "health",
+        "finance",
+        "social",
+        "other"
+      ]
+    },
+    "split": {"enum": ["train", "validation", "test", "prospective"]},
+    "leakage_group": {"type": "string", "minLength": 1},
+    "annotation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "notes"],
+      "properties": {
+        "status": {"enum": ["machine_draft", "user_reviewed", "user_confirmed"]},
+        "notes": {"type": "string"}
+      }
+    },
+    "privacy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["allowed_for_cloud"],
+      "properties": {
+        "allowed_for_cloud": {"type": "boolean"},
+        "notes": {"type": "string"}
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["task_mode", "cutoff_at", "question", "options"],
+      "properties": {
+        "task_mode": {"enum": ["context_only", "partial_deliberation", "next_action"]},
+        "cutoff_at": {"type": "string", "format": "date-time"},
+        "question": {"type": "string", "minLength": 1},
+        "options": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["option_id", "description"],
+            "properties": {
+              "option_id": {"type": "string", "minLength": 1},
+              "description": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      }
+    },
+    "persona_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "era": {"type": ["string", "null"]},
+        "machine_mode_version": {"type": ["string", "null"]},
+        "relationship_state": {"type": ["string", "null"]},
+        "stress_state": {"type": ["string", "null"]},
+        "resource_state": {"type": ["string", "null"]}
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "evidence_id",
+          "source_relative_path",
+          "source_sha256",
+          "observed_at",
+          "author_role",
+          "evidence_role",
+          "summary"
+        ],
+        "properties": {
+          "evidence_id": {"type": "string", "minLength": 1},
+          "source_relative_path": {"type": "string", "minLength": 1},
+          "source_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "record_locator": {"type": ["string", "null"]},
+          "observed_at": {"type": "string", "format": "date-time"},
+          "author_role": {"enum": ["self", "other", "mixed", "ai", "unknown"]},
+          "evidence_role": {"enum": ["input", "target", "reference"]},
+          "summary": {"type": "string"}
+        }
+      }
+    },
+    "labels": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contemporaneous_deliberation", "actual_judgement", "actual_action"],
+      "properties": {
+        "contemporaneous_deliberation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["considered_option_ids", "tensions", "unknowns", "option_probabilities"],
+          "properties": {
+            "considered_option_ids": {"type": "array", "items": {"type": "string"}},
+            "tensions": {"type": "array", "items": {"type": "string"}},
+            "unknowns": {"type": "array", "items": {"type": "string"}},
+            "option_probabilities": {
+              "type": "object",
+              "additionalProperties": {"type": "number", "minimum": 0, "maximum": 1}
+            },
+            "deliberation_intensity": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+            "confidence": {"type": ["number", "null"], "minimum": 0, "maximum": 1}
+          }
+        },
+        "actual_judgement": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["option_id", "recorded_at"],
+          "properties": {
+            "option_id": {"type": ["string", "null"]},
+            "recorded_at": {"type": ["string", "null"], "format": "date-time"},
+            "notes": {"type": "string"}
+          }
+        },
+        "actual_action": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["option_id", "recorded_at"],
+          "properties": {
+            "option_id": {"type": ["string", "null"]},
+            "recorded_at": {"type": ["string", "null"], "format": "date-time"},
+            "notes": {"type": "string"}
+          }
+        },
+        "outcome": {"type": ["string", "null"]},
+        "hindsight": {"type": ["string", "null"]}
+      }
+    },
+    "ai_references": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["source_relative_path", "generated_at", "role"],
+        "properties": {
+          "source_relative_path": {"type": "string"},
+          "generated_at": {"type": ["string", "null"], "format": "date-time"},
+          "role": {"enum": ["candidate_annotation", "comparison_only", "decision_input"]},
+          "notes": {"type": "string"}
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "episode_id": "example_event_001",
+  "domain": "relationship",
+  "split": "test",
+  "leakage_group": "same_underlying_event_001",
+  "annotation": {
+    "status": "machine_draft",
+    "notes": "This template contains no factual annotation."
+  },
+  "privacy": {
+    "allowed_for_cloud": false,
+    "notes": "Example only; replace people with stable pseudonyms."
+  },
+  "decision": {
+    "task_mode": "context_only",
+    "cutoff_at": "2026-01-01T12:00:00+08:00",
+    "question": "在当时已经知道的信息下，下一步会如何判断和行动？",
+    "options": [
+      {"option_id": "wait", "description": "暂不行动，继续观察"},
+      {"option_id": "clarify", "description": "直接沟通并要求澄清"},
+      {"option_id": "withdraw", "description": "主动降低投入或退出"}
+    ]
+  },
+  "persona_state": {
+    "era": null,
+    "machine_mode_version": null,
+    "relationship_state": null,
+    "stress_state": null,
+    "resource_state": null
+  },
+  "evidence": [],
+  "labels": {
+    "contemporaneous_deliberation": {
+      "considered_option_ids": [],
+      "tensions": [],
+      "unknowns": [],
+      "option_probabilities": {},
+      "deliberation_intensity": null,
+      "confidence": null
+    },
+    "actual_judgement": {
+      "option_id": null,
+      "recorded_at": null,
+      "notes": ""
+    },
+    "actual_action": {
+      "option_id": null,
+      "recorded_at": null,
+      "notes": ""
+    },
+    "outcome": null,
+    "hindsight": null
+  },
+  "ai_references": []
+}

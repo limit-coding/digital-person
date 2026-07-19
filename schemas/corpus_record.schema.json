@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.digital-mirror/schemas/corpus_record.schema.json",
+  "title": "Digital Mirror Corpus Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_id",
+    "source_relative_path",
+    "source_sha256",
+    "locator",
+    "source_group",
+    "record_kind",
+    "author_role",
+    "occurred_at",
+    "text",
+    "content_sha256",
+    "allowed_uses",
+    "privacy",
+    "provenance_flags"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "record_id": {"type": "string"},
+    "source_relative_path": {"type": "string"},
+    "source_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "locator": {"type": "string"},
+    "source_group": {"type": "string"},
+    "record_kind": {"enum": ["markdown_chunk", "chat_message", "chat_window"]},
+    "author_role": {
+      "enum": ["self", "other", "mixed", "ai_reference", "mixed_forwarded", "unknown"]
+    },
+    "occurred_at": {"type": ["string", "null"]},
+    "text": {"type": "string"},
+    "content_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "allowed_uses": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "memory",
+          "memory_review",
+          "style_candidate",
+          "decision_candidate",
+          "behavior_context",
+          "interaction_context",
+          "reference"
+        ]
+      }
+    },
+    "privacy": {"const": "local_sensitive"},
+    "provenance_flags": {"type": "array", "items": {"type": "string"}}
+  }
+}

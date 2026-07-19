@@ -1,0 +1,84 @@
+# Digital Mirror
+
+一个强调隐私、时间隔离和可审计评测的数字镜像实验框架。它把个人材料整理为事实经历、表达风格、价值规则和行为结果，并通过历史回放测试模型是否能在只知道当时信息的条件下预测判断、行动和纠结程度。
+
+## 核心设计
+
+- `actual_self`：预测现实行为，包括疲劳、犹豫和判断—行动落差。
+- `constitutional_self`：依据明确规则给出制度化决策。
+- 时间隔离：回放题只包含决策截止时间之前的证据。
+- 证据溯源：每项预测引用实际使用的证据编号。
+- 隐私分层：原始资料、派生语料、逐事件数据和模型输出全部留在本地。
+- 云端同意门：云端调用必须通过敏感字段检查并显式启用上传参数。
+
+架构和评测原则分别见 [docs/architecture.md](docs/architecture.md) 与 [docs/evaluation.md](docs/evaluation.md)。
+
+## 公开仓库边界
+
+本仓库只包含通用代码、Schema、无个人事实的模板和合成测试，不包含：
+
+- 原始文章、传记、笔记或聊天记录；
+- 真实人物、时间线、事件标签或历史回放题；
+- 检索索引、派生语料、逐题预测或实验报告；
+- API 密钥、账户信息、本地绝对路径或来源哈希。
+
+`data/`、`artifacts/`、`iCloud/` 和 `texts/` 均被 Git 忽略。请勿通过强制添加绕过这些边界。
+
+## 安装与测试
+
+项目需要 Python 3.11 或更高版本：
+
+```bash
+python3 -m pip install -e .
+PYTHONPATH=src python3 -m unittest discover -s tests -v
+```
+
+测试完全使用模板和合成数据；公开克隆不需要任何私人文件。
+
+## 基本工作流
+
+审计本地数据源，只生成不含正文的清单和摘要：
+
+```bash
+python3 -m digital_mirror.audit \
+  --workspace . \
+  --policy config/data_policy.json \
+  --output artifacts/data_audit
+```
+
+将本地私有事件编译成不含答案与未来证据的盲测输入：
+
+```bash
+PYTHONPATH=src python3 -m digital_mirror.replay compile \
+  data/episodes/private/example_event.json \
+  --output artifacts/replay_cases/example_event.json
+```
+
+构建本地检索索引：
+
+```bash
+PYTHONPATH=src python3 -m digital_mirror.ingest \
+  --workspace . \
+  --manifest artifacts/data_audit/manifest.jsonl \
+  --output artifacts/private/corpus
+
+PYTHONPATH=src python3 -m digital_mirror.retrieval build \
+  artifacts/private/corpus/records.jsonl \
+  --database artifacts/private/index/digital_mirror.sqlite
+```
+
+## 可选云端基线
+
+DeepSeek 基线从 `DEEPSEEK_API_KEY` 环境变量读取密钥。程序不会把密钥写入源码或结果，并要求显式提供 `--allow-cloud-upload`：
+
+```bash
+PYTHONPATH=src python3 -m digital_mirror.cloud_baseline \
+  artifacts/replay_cases/example_event.json \
+  --model deepseek-v4-pro \
+  --thinking enabled \
+  --reasoning-effort high \
+  --allow-cloud-upload \
+  --output artifacts/predictions/deepseek/example_event.json
+```
+
+即使经过脱敏，也应在上传前人工确认内容边界。默认情况下，任何个人历史都不应发送到云端。

@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "reviews"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "reviews": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "candidate_id",
+          "disposition",
+          "is_personal_decision",
+          "has_pre_cutoff_context",
+          "judgement_observable",
+          "action_observable",
+          "judgement_action_gap_possible",
+          "suggested_cutoff_local_id",
+          "reason",
+          "confidence"
+        ],
+        "properties": {
+          "candidate_id": {"type": "string"},
+          "disposition": {
+            "enum": ["replay_ready", "judgement_only", "needs_more_context", "reject"]
+          },
+          "is_personal_decision": {"type": "boolean"},
+          "has_pre_cutoff_context": {"type": "boolean"},
+          "judgement_observable": {"type": "boolean"},
+          "action_observable": {"enum": ["yes", "no", "uncertain"]},
+          "judgement_action_gap_possible": {"type": "boolean"},
+          "suggested_cutoff_local_id": {"type": ["integer", "null"]},
+          "reason": {"type": "string"},
+          "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+        }
+      }
+    }
+  }
+}
