@@ -1,0 +1,22 @@
+[Unit]
+Description=Digital Mirror web playground
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=digital-mirror
+Group=digital-mirror
+WorkingDirectory=/opt/digital-person
+EnvironmentFile=/etc/digital-mirror.env
+ExecStart=/opt/digital-person/.venv/bin/fastapi run --host 127.0.0.1 --port 8010
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/digital-mirror
+
+[Install]
+WantedBy=multi-user.target

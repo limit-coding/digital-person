@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "figure_id": "winston-churchill",
+  "name": "温斯顿·丘吉尔",
+  "native_name": "WINSTON CHURCHILL",
+  "life": "1874—1965",
+  "field": "政治 · 战争领导",
+  "tagline": "法国崩溃时，谈判还是继续作战",
+  "accent": "cobalt",
+  "archive_scale": "约100万件个人与官方文件、完整战时内阁记录",
+  "status": "研究原型",
+  "method_note": "丘吉尔材料规模巨大，但部分数字档案需要机构订阅。切片因此同时显示公开档案目录、内阁记录指南与博物馆叙述的来源层级。",
+  "slices": [
+    {
+      "slice_id": "churchill-1940-cabinet",
+      "date": "1940-05-26",
+      "date_label": "1940年5月",
+      "title": "战时内阁的谈判争论",
+      "question": "在法国战局迅速恶化、英军被围之际，是否应通过意大利试探与德国谈判的条件？",
+      "context": "丘吉尔就任首相仅两周。哈利法克斯主张保留谈判渠道，而继续作战可能意味着远征军损失和本土面临入侵。",
+      "known_at_cutoff": [
+        "德国装甲部队已突破西线，英法联军处境急剧恶化。",
+        "英国仍拥有海军、帝国资源和潜在的跨大西洋支持，但这些优势能否及时转化并不确定。",
+        "战时内阁内部对谈判是否损害士气和独立存在分歧。"
+      ],
+      "unknown_at_cutoff": [
+        "敦刻尔克撤退能够救出多少部队。",
+        "法国还能坚持多久。",
+        "德国会提出何种条件，美国未来会提供多大支持。"
+      ],
+      "tensions": [
+        "保存眼前实力 vs 保留长期战略自主",
+        "精英谈判空间 vs 国内士气",
+        "军事概率 vs 不可接受的政治风险"
+      ],
+      "hypotheses": [
+        {
+          "hypothesis_id": "fight-on",
+          "label": "拒绝启动谈判并继续作战",
+          "probability": 0.55,
+          "basis": "丘吉尔此前的政治轨迹和对谈判损害士气的判断都偏向继续抵抗。",
+          "evidence_ids": ["churchill-e1", "churchill-e2"]
+        },
+        {
+          "hypothesis_id": "explore-only",
+          "label": "允许意大利试探，但不作承诺",
+          "probability": 0.29,
+          "basis": "这能在军事信息极不完整时保留选择权，也回应哈利法克斯与张伯伦的担忧。",
+          "evidence_ids": ["churchill-e2"]
+        },
+        {
+          "hypothesis_id": "negotiate",
+          "label": "正式寻求谈判解决",
+          "probability": 0.16,
+          "basis": "短期军事风险支持该方案，但它与丘吉尔对英国独立和长期战争的判断冲突最大。",
+          "evidence_ids": ["churchill-e1"]
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "churchill-e1",
+          "date": "1940-05-26",
+          "kind": "博物馆研究叙述",
+          "proximity": "基于同期记录的二手材料",
+          "summary": "帝国战争博物馆梳理了丘吉尔、哈利法克斯、张伯伦与艾德礼在五月末谈判争论中的不同位置。",
+          "source_title": "IWM：1940年5月塑造英国未来的人",
+          "source_url": "https://www.iwm.org.uk/history/darkest-hour-the-people-who-helped-shape-the-future-of-britain-in-may-1940-0",
+          "confidence": "中高"
+        },
+        {
+          "evidence_id": "churchill-e2",
+          "date": "1940-05",
+          "kind": "战时内阁档案",
+          "proximity": "同期官方记录",
+          "summary": "英国国家档案馆的CAB 65系列保存二战战时内阁结论；档案馆特别提醒这些是讨论摘要而非逐字记录。",
+          "source_title": "英国国家档案馆：内阁及委员会记录指南",
+          "source_url": "https://www.nationalarchives.gov.uk/help-with-your-research/research-guides/cabinet-and-committees/",
+          "confidence": "高"
+        },
+        {
+          "evidence_id": "churchill-e3",
+          "date": "1874—1965",
+          "kind": "个人档案目录",
+          "proximity": "来源背景",
+          "summary": "丘吉尔档案约含100万件个人与官方文件，覆盖通信、演说、首相文件和战时材料。",
+          "source_title": "Churchill Archives Centre：丘吉尔文件",
+          "source_url": "https://archives.chu.cam.ac.uk/collections/churchill-papers/",
+          "confidence": "高"
+        }
+      ]
+    }
+  ]
+}

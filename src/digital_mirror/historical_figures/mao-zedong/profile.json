@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "figure_id": "mao-zedong",
+  "name": "毛泽东",
+  "native_name": "MAO ZEDONG",
+  "life": "1893—1976",
+  "field": "政治 · 革命 · 国家治理",
+  "tagline": "在革命延续、组织控制与政治安全之间",
+  "accent": "vermilion",
+  "archive_scale": "文稿、年谱、会议文件与多方回忆",
+  "status": "研究原型",
+  "method_note": "这一数字切片不声称读取人物内心。它把同期文件中的明确主张、实际组织动作和后来的研究性叙述分层呈现，并保留竞争解释。",
+  "slices": [
+    {
+      "slice_id": "mao-1966-may",
+      "date": "1966-05-16",
+      "date_label": "1966年5月",
+      "title": "“五一六通知”形成前夜",
+      "question": "文化批判应当停留在学术领域，还是转向对党内权力与路线的全面动员？",
+      "context": "二月提纲试图把争论限制为学术问题；到五月，原有文化革命领导机构及其路线面临被撤销和重组。",
+      "known_at_cutoff": [
+        "1962年以来，阶级斗争重新成为重要政治判断框架。",
+        "围绕《海瑞罢官》的批判已经从学术争论转向政治路线问题。",
+        "二月提纲与更激进的运动方向发生冲突，中央内部存在明显分歧。"
+      ],
+      "unknown_at_cutoff": [
+        "群众动员突破既有组织边界后能否受到控制。",
+        "党政体系的抵抗规模以及军队最终扮演的角色。",
+        "运动对教育、生产、干部体系和普通人的长期代价。"
+      ],
+      "tensions": [
+        "持续革命 vs 制度秩序",
+        "群众动员 vs 组织可控性",
+        "意识形态判断 vs 权力安全"
+      ],
+      "hypotheses": [
+        {
+          "hypothesis_id": "reorganize",
+          "label": "重组机构并把斗争指向党内",
+          "probability": 0.57,
+          "basis": "同期文件把问题从文化领域扩大到党政军中的所谓资产阶级代表人物，并伴随组织重构。",
+          "evidence_ids": ["mao-e1", "mao-e2"]
+        },
+        {
+          "hypothesis_id": "controlled-escalation",
+          "label": "以分阶段方式扩大运动",
+          "probability": 0.27,
+          "basis": "同期也存在对工交等领域分期分批、保持生产的安排，说明全面动员与控制并存。",
+          "evidence_ids": ["mao-e3"]
+        },
+        {
+          "hypothesis_id": "academic-only",
+          "label": "仍将争论限制在学术批判",
+          "probability": 0.16,
+          "basis": "二月提纲代表这一选项，但在截止点附近已经失势。",
+          "evidence_ids": ["mao-e1"]
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "mao-e1",
+          "date": "1966-05-16",
+          "kind": "中央文件",
+          "proximity": "同期直接材料",
+          "summary": "通知撤销二月提纲及原五人小组，设立新的中央文革小组，并把批判对象扩大到党政军和文化领域。",
+          "source_title": "中国共产党新闻网：五一六通知",
+          "source_url": "https://cpc.people.com.cn/BIG5/64162/64165/79703/79794/5703725.html",
+          "confidence": "高"
+        },
+        {
+          "evidence_id": "mao-e2",
+          "date": "1966-05-16",
+          "kind": "文件全文",
+          "proximity": "同期文本镜像",
+          "summary": "文件把1962年以来的阶级斗争判断与当下文化、组织问题连接起来。",
+          "source_title": "May 16 Circular 全文档案",
+          "source_url": "https://www.marxists.org/subject/china/documents/cpc/cc_gpcr.htm",
+          "confidence": "高"
+        },
+        {
+          "evidence_id": "mao-e3",
+          "date": "1966-07-02",
+          "kind": "官方大事记",
+          "proximity": "稍后同期记录",
+          "summary": "针对工业交通和基本建设单位的通知仍强调分期分批并保证国家任务，构成对“完全失控动员”解释的限制性证据。",
+          "source_title": "中国共产党大事记·1966年",
+          "source_url": "https://cpc.people.com.cn/GB/64162/64164/4416081.html",
+          "confidence": "中高"
+        }
+      ]
+    }
+  ]
+}

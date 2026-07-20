@@ -7,7 +7,7 @@ name = "digital-mirror"
 version = "0.1.0"
 description = "Auditable personal digital-mirror data and evaluation pipeline"
 requires-python = ">=3.10"
-dependencies = []
+dependencies = ["fastapi[standard]>=0.115,<1"]
 
 [project.scripts]
 digital-mirror-audit = "digital_mirror.audit:main"
@@ -17,3 +17,9 @@ package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+digital_mirror = ["web_static/*", "historical_figures/*/*.json"]
+
+[tool.fastapi]
+entrypoint = "digital_mirror.webapp:app"

@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "figure_id": "nelson-mandela",
+  "name": "纳尔逊·曼德拉",
+  "native_name": "NELSON MANDELA",
+  "life": "1918—2013",
+  "field": "反种族隔离 · 国家和解",
+  "tagline": "在可能的死刑判决前，法庭也是政治现场",
+  "accent": "gold",
+  "archive_scale": "基金会档案、审判记录、书信与口述史",
+  "status": "研究原型",
+  "method_note": "曼德拉档案既保存个人文本，也保存组织、审判和国际机构材料，适合比较个人立场、集体策略与后来公共记忆之间的差异。",
+  "slices": [
+    {
+      "slice_id": "mandela-1964-rivonia",
+      "date": "1964-04-20",
+      "date_label": "1964年4月",
+      "title": "利沃尼亚审判被告席陈词",
+      "question": "面对可能的死刑，应以技术性法律辩护为主，还是公开解释武装斗争并把审判转化为政治宣言？",
+      "context": "控方指控多名非国大领导人破坏活动。曼德拉已被关押，陈词既可能影响判决，也可能成为运动对国内外社会的长期文本。",
+      "known_at_cutoff": ["控方掌握了利利斯里夫农场查获的组织文件。", "被告可能面临死刑。", "非暴力政治空间在沙佩维尔事件和组织被禁后急剧收缩。"],
+      "unknown_at_cutoff": ["法官会如何权衡政治陈词与量刑。", "国际压力是否足以影响死刑风险。", "长篇原则陈述会加强还是削弱具体法律辩护。"],
+      "tensions": ["个人生存 vs 运动叙事", "法律策略 vs 政治见证", "非暴力理想 vs 有限破坏行动"],
+      "hypotheses": [
+        {"hypothesis_id": "political-statement", "label": "作完整政治陈词并承担风险", "probability": 0.61, "basis": "其既有法庭策略和组织角色都支持把审判转化为公开解释行动逻辑的机会。", "evidence_ids": ["mandela-e1", "mandela-e2"]},
+        {"hypothesis_id": "legal-defense", "label": "主要采用技术性法律辩护", "probability": 0.22, "basis": "能降低直接自证风险，但会放弃罕见的公开传播窗口。", "evidence_ids": ["mandela-e2"]},
+        {"hypothesis_id": "short-defiance", "label": "简短否认审判正当性", "probability": 0.17, "basis": "表达清晰，却不足以解释从非暴力到破坏活动的转变。", "evidence_ids": ["mandela-e1"]}
+      ],
+      "evidence": [
+        {"evidence_id": "mandela-e1", "date": "1964-04-20", "kind": "法庭录音与逐字稿", "proximity": "同期直接材料", "summary": "基金会档案保存曼德拉被告席陈词的录音来源和逐字转写，可直接核对公开论证。", "source_title": "NMF Archive：I am prepared to die", "source_url": "https://archive.nelsonmandela.org/index.php/za-com-mr-s-10", "confidence": "高"},
+        {"evidence_id": "mandela-e2", "date": "1963—1964", "kind": "审判专题档案", "proximity": "同期材料集合", "summary": "专题目录汇集辩方准备、审判证物、演说版本及英国外交记录，允许比较多方位置。", "source_title": "NMF Archive：Rivonia Trial", "source_url": "https://archive.nelsonmandela.org/index.php/rivonia-trial-2", "confidence": "高"},
+        {"evidence_id": "mandela-e3", "date": "1964-06-12", "kind": "判决结果", "proximity": "事件结果（不进入盲测）", "summary": "最终量刑属于截止点之后的信息，只用于回放评分和后见分析。", "source_title": "Nelson Mandela Foundation 档案指南", "source_url": "https://www.nelsonmandela.org/uploads/files/Organisations_and_Individuals_Archives.pdf", "confidence": "中高"}
+      ]
+    }
+  ]
+}

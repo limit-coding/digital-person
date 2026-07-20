@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#eee9df" />
+    <meta name="description" content="以同期证据、时间截面和竞争假设，重建历史人物的关键决策时刻。" />
+    <meta property="og:title" content="Mirror Atlas · 历史人物数字切片" />
+    <meta property="og:description" content="不是替历史人物读心，而是让每一种推断都能被追问。" />
+    <meta property="og:image" content="https://mirror.learnpath.tech/assets/og.png" />
+    <title>Mirror Atlas · 历史人物数字切片</title>
+    <link rel="stylesheet" href="/assets/styles.css" />
+    <script src="/assets/app.js" defer></script>
+  </head>
+  <body>
+    <div class="paper-grain" aria-hidden="true"></div>
+
+    <div id="public-site">
+      <header class="site-header">
+        <a class="wordmark" href="#top" aria-label="Mirror Atlas 首页">
+          <span class="wordmark-mark">M</span>
+          <span><b>Mirror Atlas</b><small>历史人物数字切片</small></span>
+        </a>
+        <nav aria-label="主导航">
+          <a href="#figures">人物馆</a>
+          <a href="#method">方法</a>
+          <button class="personal-entry" id="open-private" type="button">我的镜像 <span>↗</span></button>
+        </nav>
+      </header>
+
+      <main id="top">
+        <section class="hero">
+          <div class="hero-copy">
+            <p class="overline">EVIDENCE-CONSTRAINED PERSONA RECONSTRUCTION</p>
+            <h1>在历史转弯之前，<br /><em>他看见了什么？</em></h1>
+            <p class="hero-lede">把人物放回当时的知识边界。不是替他们读心，而是用同期材料重建选项、冲突和不确定性。</p>
+            <div class="hero-actions">
+              <a class="primary-action" href="#figures">进入人物馆 <span>↓</span></a>
+              <a class="text-action" href="#method">我们如何推断</a>
+            </div>
+          </div>
+          <div class="hero-orbit" aria-label="首批数字镜像人物">
+            <div class="orbit-ring ring-one"></div>
+            <div class="orbit-ring ring-two"></div>
+            <button class="orbit-person p-mao" data-figure-jump="mao-zedong" type="button"><b>毛</b><span>1966</span></button>
+            <button class="orbit-person p-darwin" data-figure-jump="charles-darwin" type="button"><b>达</b><span>1858</span></button>
+            <button class="orbit-person p-lincoln" data-figure-jump="abraham-lincoln" type="button"><b>林</b><span>1862</span></button>
+            <button class="orbit-person p-churchill" data-figure-jump="winston-churchill" type="button"><b>丘</b><span>1940</span></button>
+            <div class="orbit-core"><strong>08</strong><span>人物镜像</span><small>彼此隔离</small></div>
+          </div>
+        </section>
+
+        <section class="principle-strip" aria-label="系统原则">
+          <div><span>01</span><p><b>时间截面</b>只使用当时可知的信息</p></div>
+          <div><span>02</span><p><b>竞争假设</b>同时保留多种动机解释</p></div>
+          <div><span>03</span><p><b>证据溯源</b>每个判断都能回到材料</p></div>
+          <div><span>04</span><p><b>人物隔离</b>语料、记忆与输出互不混用</p></div>
+        </section>
+
+        <section class="atlas-section" id="figures">
+          <div class="section-intro">
+            <p class="overline">THE FIRST COLLECTION · 001—004</p>
+            <h2>人物不是一个答案，<br />而是一组可检验的切片。</h2>
+            <p>首批选择依据史料丰富度、同期记录密度和决策节点清晰度，覆盖政治、战争与科学。</p>
+          </div>
+
+          <div class="atlas-layout">
+            <aside class="figure-index" aria-label="人物列表">
+              <div class="index-head"><span>人物档案</span><b id="figure-count">00</b></div>
+              <div id="figure-list" class="figure-list" aria-live="polite"></div>
+              <p class="index-note">每位人物使用独立资料目录、独立时间线和独立检索边界。</p>
+            </aside>
+
+            <article class="figure-dossier" id="figure-dossier" aria-live="polite">
+              <div class="dossier-loading">正在整理人物档案…</div>
+            </article>
+          </div>
+        </section>
+
+        <section class="method-section" id="method">
+          <div class="method-heading">
+            <p class="overline">METHOD / NOT MIND READING</p>
+            <h2>推断必须留下<br /><em>可以反驳它的门。</em></h2>
+          </div>
+          <div class="method-grid">
+            <article><span>Ⅰ</span><h3>固定截止时间</h3><p>先封住结局，再让系统面对当时真实存在的选项。后来的材料只能用于评测，不能偷偷进入输入。</p></article>
+            <article><span>Ⅱ</span><h3>拆开材料身份</h3><p>公开表态、私人书信、实际行动、他人回忆和研究者解释分别标注，不把它们混成一段人格描述。</p></article>
+            <article><span>Ⅲ</span><h3>展示概率而非独白</h3><p>输出多种竞争假设、证据和反证。流畅的第一人称独白可以用于展示，但永远不冒充真实内心。</p></article>
+          </div>
+        </section>
+
+        <section class="closing-section">
+          <p class="overline">A LIVING RESEARCH INTERFACE</p>
+          <h2>同一人物，不同年份，<br />可能是完全不同的镜像。</h2>
+          <p>下一阶段将增加更多时间切片、相互冲突的史料视角，以及可调节的证据权重。</p>
+          <a href="#figures">浏览第一批切片 <span>↑</span></a>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <div class="wordmark"><span class="wordmark-mark">M</span><span><b>Mirror Atlas</b><small>mirror.learnpath.tech</small></span></div>
+        <p>历史重建原型 · 所有推断均应结合原始史料审慎阅读</p>
+      </footer>
+    </div>
+
+    <section class="private-shell" id="private-shell" hidden>
+      <header class="private-header">
+        <button id="back-public" type="button">← 返回人物馆</button>
+        <div><b>Personal Mirror</b><span>与历史人物语料完全隔离</span></div>
+        <button id="logout-button" type="button" hidden>退出登录</button>
+      </header>
+
+      <div class="login-view" id="login-view">
+        <div class="login-art" aria-hidden="true"><span>YOU</span><i></i></div>
+        <form class="login-card" id="login-form">
+          <p class="overline">PRIVATE / ENCRYPTED SESSION</p>
+          <h1>进入你的<br /><em>私人镜像</em></h1>
+          <p>个人材料、历史人物档案和模型输出使用不同的数据边界。</p>
+          <label for="password">独立访问密码</label>
+          <div class="password-row">
+            <input id="password" name="password" type="password" autocomplete="current-password" required />
+            <button type="submit" aria-label="登录">→</button>
+          </div>
+          <p class="form-message" id="login-message" role="alert"></p>
+        </form>
+      </div>
+
+      <div class="private-app" id="private-app" hidden>
+        <aside class="private-events">
+          <p class="overline">YOUR REPLAY ARCHIVE</p>
+          <h2>私人历史切片 <span id="event-count">0</span></h2>
+          <div id="event-list"></div>
+        </aside>
+        <main class="private-stage">
+          <div class="private-empty" id="private-empty"><h2>还没有私人切片</h2><p>这里永远不会读取历史人物档案。</p></div>
+          <article id="private-event" hidden>
+            <div class="private-event-head"><p id="private-tags"></p><h1 id="event-question"></h1><span id="event-cutoff"></span></div>
+            <section><h3>当时已知</h3><div class="private-evidence" id="evidence-list"></div></section>
+            <section><h3>可能选择</h3><div class="private-options" id="option-grid"></div></section>
+            <div class="private-run">
+              <div><b>历史截面已锁定</b><span>模型看不到事件结果</span></div>
+              <div class="mode-control"><button class="mode active" data-thinking="enabled" type="button">思考模式</button><button class="mode" data-thinking="disabled" type="button">直觉模式</button></div>
+              <button id="run-button" type="button">开始回放 ↗</button>
+              <p id="run-message" role="status"></p>
+            </div>
+            <section class="private-result" id="result-section" hidden>
+              <h2>镜像预测与真实记录</h2>
+              <div class="result-pair"><article><span>模型判断</span><b id="model-judgement"></b><small id="model-action"></small></article><article><span>真实判断</span><b id="actual-judgement"></b><small id="actual-action"></small></article></div>
+              <div id="probability-list" class="private-probabilities"></div>
+            </section>
+          </article>
+        </main>
+      </div>
+    </section>
+  </body>
+</html>
