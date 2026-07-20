@@ -38,7 +38,6 @@ fi
 install -m 0644 "${app_root}/deploy/digital-mirror.service" /etc/systemd/system/digital-mirror.service
 install -m 0644 "${app_root}/deploy/nginx-mirror.conf" /etc/nginx/sites-available/mirror.learnpath.tech
 ln -sfn /etc/nginx/sites-available/mirror.learnpath.tech /etc/nginx/sites-enabled/mirror.learnpath.tech
-rm -f /etc/nginx/sites-enabled/default
 
 systemctl daemon-reload
 systemctl enable --now digital-mirror nginx

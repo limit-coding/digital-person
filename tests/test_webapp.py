@@ -1,3 +1,4 @@
+import json
 import os
 import tempfile
 import unittest
@@ -114,11 +115,21 @@ class WebAppTests(unittest.TestCase):
         self.assertIn("明确授权", denied.json()["detail"])
 
     def test_event_replay_selects_model_and_requires_cloud_consent(self):
-        source = Path(
-            "data/episodes/provisional/relationship_2026_03_11_send_long_message.json"
-        )
-        (self.episode_root / source.name).write_text(
-            source.read_text(encoding="utf-8"), encoding="utf-8"
+        source = Path(__file__).parents[1] / "templates" / "historical_episode.json"
+        episode = json.loads(source.read_text(encoding="utf-8"))
+        episode["episode_id"] = "synthetic_replay"
+        episode["labels"]["actual_judgement"] = {
+            "option_id": "clarify",
+            "recorded_at": "2026-01-01T12:01:00+08:00",
+            "notes": "Synthetic label.",
+        }
+        episode["labels"]["actual_action"] = {
+            "option_id": "wait",
+            "recorded_at": "2026-01-01T12:05:00+08:00",
+            "notes": "Synthetic label.",
+        }
+        (self.episode_root / "synthetic_replay.json").write_text(
+            json.dumps(episode), encoding="utf-8"
         )
 
         def fake_replay_runner(case, _schema, model_id, _thinking, allow_cloud):
@@ -127,19 +138,19 @@ class WebAppTests(unittest.TestCase):
             return (
                 {
                     "episode_id": case["episode_id"],
-                    "predicted_judgement": "send",
-                    "predicted_action": "hold",
+                    "predicted_judgement": "clarify",
+                    "predicted_action": "withdraw",
                     "option_probabilities": {
-                        "send": 0.45,
-                        "hold": 0.5,
-                        "abandon": 0.05,
+                        "wait": 0.45,
+                        "clarify": 0.5,
+                        "withdraw": 0.05,
                     },
-                    "considered_option_ids": ["send", "hold"],
+                    "considered_option_ids": ["wait", "clarify"],
                     "tensions": ["表达 vs 风险"],
                     "unknowns": ["对方反应"],
                     "deliberation_intensity": 0.7,
                     "confidence": 0.6,
-                    "evidence_ids": [case["evidence"][0]["evidence_id"]],
+                    "evidence_ids": [],
                 },
                 0,
             )
@@ -154,7 +165,7 @@ class WebAppTests(unittest.TestCase):
             )
             client.post("/api/login", json={"password": "test-password"})
             payload = {
-                "episode_id": "relationship_2026_03_11_send_long_message",
+                "episode_id": "synthetic_replay",
                 "thinking": "enabled",
                 "model_id": "gemini",
                 "allow_cloud": False,
@@ -171,8 +182,8 @@ class WebAppTests(unittest.TestCase):
         self.assertEqual(allowed.status_code, 200)
         body = allowed.json()
         self.assertEqual(body["model"]["model_id"], "gemini")
-        self.assertEqual(body["prediction"]["predicted_action"], "hold")
-        self.assertEqual(body["actual"]["action"], "send")
+        self.assertEqual(body["prediction"]["predicted_action"], "withdraw")
+        self.assertEqual(body["actual"]["action"], "wait")
         self.assertNotIn("source_relative_path", str(body))
 
     def test_unknown_or_malformed_figure_returns_not_found(self):
