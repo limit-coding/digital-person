@@ -50,3 +50,10 @@
 - 增加穆斯塔法·凯末尔的1919年阿马西亚通告切片，补入西亚、帝国解体与民族国家建构视角。
 - 增加蕾切尔·卡森的1958年《寂静的春天》起点切片，补入女性科学写作者与环境政治视角。
 - 人物总数由8位增至11位；继续保持一人一目录、一人一检索边界。
+
+## 2026-07-20 · GitHub 里程碑
+
+- 功能分支 `agent/historical-mirror-atlas` 已推送到 GitHub。
+- 开发日志 Issue：[#1](https://github.com/limit-coding/digital-person/issues/1)。
+- 草稿 Pull Request：[#2](https://github.com/limit-coding/digital-person/pull/2)。
+- 服务器 SSH 连接仍然超时，线上部署继续保留为合并前验收项。
