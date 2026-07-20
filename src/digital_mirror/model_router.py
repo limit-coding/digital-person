@@ -17,6 +17,10 @@ class ModelUnavailableError(ValueError):
     """Raised when the requested provider has not been configured."""
 
 
+class CloudConsentRequiredError(ValueError):
+    """Raised when private aggregates would be sent without explicit consent."""
+
+
 @dataclass(frozen=True)
 class ModelSpec:
     model_id: str
@@ -150,7 +154,7 @@ def build_historical_prompt(
         "只以所给人物和所选时期作答，不得借用人物后来才知道的结局。\n"
         "可以回答天马行空的反事实问题，但必须把史料支持与创造性推演分开。\n"
         "不要模仿口音，不要声称知道未留下记录的真实内心。\n"
-        "输出一个 JSON 对象，字段为 answer、supported_claims、speculative_claims、"
+        "输出一个 JSON 对象，字段为 judgement、answer、supported_claims、speculative_claims、"
         "unknowns、evidence_ids、follow_up_questions。每个列表最多 5 项。\n\n"
         + json.dumps(context, ensure_ascii=False, sort_keys=True)
     )
@@ -213,6 +217,11 @@ def _builtin_answer(
     else:
         answer += " 本地模式不补写人物未曾留下的内心独白。"
     return {
+        "judgement": (
+            "可作为新工具推演，但当前材料不足以替人物确定唯一立场"
+            if mode == "counterfactual"
+            else "当前时期材料只能支持有边界的回答"
+        ),
         "answer": answer,
         "supported_claims": anchors,
         "speculative_claims": [],
@@ -226,6 +235,86 @@ def _builtin_answer(
             "要更保守的史料回答，还是明确标注的反事实推演？",
         ],
     }
+
+
+def _run_external_model(
+    spec: ModelSpec,
+    prompt: str,
+    mode: AnswerMode,
+    request: Callable[[str, dict[str, Any], str | None, int], dict[str, Any]],
+) -> dict[str, Any]:
+    if spec.model_id == "deepseek":
+        response = request(
+            "https://api.deepseek.com/chat/completions",
+            {
+                "model": spec.model,
+                "messages": [{"role": "user", "content": prompt}],
+                "response_format": {"type": "json_object"},
+                "temperature": 0.2 if mode == "grounded" else 0.75,
+            },
+            os.environ.get("DEEPSEEK_API_KEY"),
+            120,
+        )
+        return _parse_json_content(response["choices"][0]["message"]["content"])
+    if spec.model_id in {"openai", "compatible"}:
+        if spec.model_id == "openai":
+            base_url = os.environ.get(
+                "DIGITAL_MIRROR_OPENAI_BASE_URL", "https://api.openai.com/v1"
+            )
+            api_key = os.environ.get("OPENAI_API_KEY")
+        else:
+            base_url = os.environ["DIGITAL_MIRROR_COMPATIBLE_BASE_URL"]
+            api_key = os.environ.get("DIGITAL_MIRROR_COMPATIBLE_API_KEY")
+        response = request(
+            base_url.rstrip("/") + "/chat/completions",
+            {
+                "model": spec.model,
+                "messages": [{"role": "user", "content": prompt}],
+                "response_format": {"type": "json_object"},
+                "temperature": 0.2 if mode == "grounded" else 0.75,
+            },
+            api_key,
+            120,
+        )
+        return _parse_json_content(response["choices"][0]["message"]["content"])
+    if spec.model_id == "gemini":
+        gemini_key = os.environ.get("GEMINI_API_KEY") or os.environ.get(
+            "GOOGLE_API_KEY"
+        )
+        response = request(
+            "https://generativelanguage.googleapis.com/v1beta/models/"
+            + spec.model
+            + ":generateContent",
+            {
+                "contents": [{"parts": [{"text": prompt}]}],
+                "generationConfig": {
+                    "temperature": 0.2 if mode == "grounded" else 0.75,
+                    "responseMimeType": "application/json",
+                },
+            },
+            gemini_key,
+            120,
+        )
+        return _parse_json_content(
+            response["candidates"][0]["content"]["parts"][0]["text"]
+        )
+
+    response = request(
+        os.environ.get(
+            "DIGITAL_MIRROR_OLLAMA_URL", "http://127.0.0.1:11434"
+        ).rstrip("/")
+        + "/api/chat",
+        {
+            "model": spec.model,
+            "messages": [{"role": "user", "content": prompt}],
+            "format": "json",
+            "stream": False,
+            "options": {"temperature": 0.2 if mode == "grounded" else 0.75},
+        },
+        None,
+        180,
+    )
+    return _parse_json_content(response["message"]["content"])
 
 
 def answer_historical_question(
@@ -244,74 +333,7 @@ def answer_historical_question(
         result = _builtin_answer(profile, period, question, mode)
     else:
         prompt = build_historical_prompt(profile, period, question, mode, history)
-        if model_id == "deepseek":
-            response = request(
-                "https://api.deepseek.com/chat/completions",
-                {
-                    "model": spec.model,
-                    "messages": [{"role": "user", "content": prompt}],
-                    "response_format": {"type": "json_object"},
-                    "temperature": 0.2 if mode == "grounded" else 0.75,
-                },
-                os.environ.get("DEEPSEEK_API_KEY"),
-                120,
-            )
-            result = _parse_json_content(response["choices"][0]["message"]["content"])
-        elif model_id in {"openai", "compatible"}:
-            if model_id == "openai":
-                base_url = os.environ.get("DIGITAL_MIRROR_OPENAI_BASE_URL", "https://api.openai.com/v1")
-                api_key = os.environ.get("OPENAI_API_KEY")
-            else:
-                base_url = os.environ["DIGITAL_MIRROR_COMPATIBLE_BASE_URL"]
-                api_key = os.environ.get("DIGITAL_MIRROR_COMPATIBLE_API_KEY")
-            response = request(
-                base_url.rstrip("/") + "/chat/completions",
-                {
-                    "model": spec.model,
-                    "messages": [{"role": "user", "content": prompt}],
-                    "response_format": {"type": "json_object"},
-                    "temperature": 0.2 if mode == "grounded" else 0.75,
-                },
-                api_key,
-                120,
-            )
-            result = _parse_json_content(response["choices"][0]["message"]["content"])
-        elif model_id == "gemini":
-            gemini_key = os.environ.get("GEMINI_API_KEY") or os.environ.get(
-                "GOOGLE_API_KEY"
-            )
-            response = request(
-                "https://generativelanguage.googleapis.com/v1beta/models/"
-                + spec.model
-                + ":generateContent",
-                {
-                    "contents": [{"parts": [{"text": prompt}]}],
-                    "generationConfig": {
-                        "temperature": 0.2 if mode == "grounded" else 0.75,
-                        "responseMimeType": "application/json",
-                    },
-                },
-                gemini_key,
-                120,
-            )
-            result = _parse_json_content(
-                response["candidates"][0]["content"]["parts"][0]["text"]
-            )
-        else:
-            response = request(
-                os.environ.get("DIGITAL_MIRROR_OLLAMA_URL", "http://127.0.0.1:11434").rstrip("/")
-                + "/api/chat",
-                {
-                    "model": spec.model,
-                    "messages": [{"role": "user", "content": prompt}],
-                    "format": "json",
-                    "stream": False,
-                    "options": {"temperature": 0.2 if mode == "grounded" else 0.75},
-                },
-                None,
-                180,
-            )
-            result = _parse_json_content(response["message"]["content"])
+        result = _run_external_model(spec, prompt, mode, request)
 
     period_anchors = [str(item) for item in period.get("anchors") or []][:5]
     model_supported = [str(item) for item in result.get("supported_claims") or []][:5]
@@ -340,6 +362,11 @@ def answer_historical_question(
         "period_label": period["label"],
         "model": spec.public(),
         "mode": mode,
+        "judgement": str(
+            result.get("judgement")
+            or result.get("answer")
+            or "当前模型没有给出明确判断"
+        )[:180],
         "answer": str(result.get("answer") or ""),
         "supported_claims": period_anchors,
         "speculative_claims": speculative_claims[:5],
@@ -347,4 +374,108 @@ def answer_historical_question(
         "evidence_ids": evidence_ids,
         "follow_up_questions": [str(item) for item in result.get("follow_up_questions") or []][:5],
         "boundary_note": "回答属于时期化证据推演，不代表人物真实说过这些话，也不等于其内心真值。",
+    }
+
+
+def build_personal_prompt(
+    snapshot: dict[str, Any],
+    question: str,
+    history: list[dict[str, str]],
+) -> str:
+    safe_context = {
+        "confidence": snapshot.get("confidence"),
+        "coverage": snapshot.get("coverage"),
+        "decision_metrics": snapshot.get("decision_metrics"),
+        "signals": snapshot.get("signals"),
+        "domains": snapshot.get("domains"),
+        "active_tensions": snapshot.get("active_tensions"),
+        "conversation": history,
+        "question": question,
+    }
+    return (
+        "你是私人数字镜像的分析器。你看到的只是经用户授权的结构化聚合画像，"
+        "没有聊天原文，也不是用户本人。\n"
+        "回答用户的问题时必须区分：现有样本直接支持的模式、基于模式的推测、"
+        "以及样本仍无法回答的部分。不要诊断人格，不要把低样本统计写成稳定本质。\n"
+        "输出一个 JSON 对象，字段为 judgement、answer、supported_claims、"
+        "speculative_claims、unknowns、evidence_ids、follow_up_questions。"
+        "每个列表最多 5 项。\n\n"
+        + json.dumps(safe_context, ensure_ascii=False, sort_keys=True)
+    )
+
+
+def answer_personal_question(
+    snapshot: dict[str, Any],
+    question: str,
+    model_id: str,
+    history: list[dict[str, str]],
+    allow_cloud: bool,
+    request: Callable[[str, dict[str, Any], str | None, int], dict[str, Any]] = _json_request,
+) -> dict[str, Any]:
+    spec = model_spec(model_id)
+    if not spec or not spec.available:
+        raise ModelUnavailableError("model is not available")
+    if not spec.local and not allow_cloud:
+        raise CloudConsentRequiredError("cloud consent is required")
+
+    signal_claims = [
+        f"{item['label']}：{item['value']}。{item['note']}"
+        for item in (snapshot.get("signals") or [])[:5]
+    ]
+    if model_id == "evidence-synthesis":
+        result = {
+            "judgement": "当前只能从少量真实决策中提出工作假设",
+            "answer": (
+                f"你问的是：{question}。当前镜像基于"
+                f"{snapshot.get('coverage', {}).get('event_count', 0)} 个决策切片；"
+                "它可以指出已有行为模式，但不能替你确认尚未记录的价值与选择。"
+            ),
+            "supported_claims": signal_claims,
+            "speculative_claims": [],
+            "unknowns": [
+                snapshot.get("confidence", {}).get("note", "样本仍然有限"),
+                "没有被记录的场景不能从现有统计中反推。",
+            ],
+            "evidence_ids": [item.get("signal_id") for item in snapshot.get("signals") or []],
+            "follow_up_questions": ["要不要补一条能检验这个判断的新决策记录？"],
+        }
+    else:
+        result = _run_external_model(
+            spec, build_personal_prompt(snapshot, question, history), "grounded", request
+        )
+
+    model_supported = [str(item) for item in result.get("supported_claims") or []]
+    model_speculative = [str(item) for item in result.get("speculative_claims") or []]
+    speculative_claims: list[str] = []
+    for item in model_supported + model_speculative:
+        if item not in signal_claims and item not in speculative_claims:
+            speculative_claims.append(item)
+    allowed_ids = {
+        str(item.get("signal_id"))
+        for item in snapshot.get("signals") or []
+        if item.get("signal_id")
+    }
+
+    return {
+        "mirror_id": "personal",
+        "mirror_title": snapshot.get("title", "你的决策镜像"),
+        "model": spec.public(),
+        "judgement": str(
+            result.get("judgement")
+            or result.get("answer")
+            or "当前模型没有给出明确判断"
+        )[:180],
+        "answer": str(result.get("answer") or ""),
+        "supported_claims": signal_claims,
+        "speculative_claims": speculative_claims[:5],
+        "unknowns": [str(item) for item in result.get("unknowns") or []][:5],
+        "evidence_ids": [
+            str(item)
+            for item in result.get("evidence_ids") or []
+            if str(item) in allowed_ids
+        ],
+        "follow_up_questions": [
+            str(item) for item in result.get("follow_up_questions") or []
+        ][:5],
+        "boundary_note": "这是基于少量私人决策聚合的工作模型，不是人格诊断，也不会替你作最终决定。",
     }

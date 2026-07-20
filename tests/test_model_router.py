@@ -20,6 +20,7 @@ class ModelRouterTests(unittest.TestCase):
                         "message": {
                             "content": json.dumps(
                                 {
+                                    "judgement": "更像一种新工具",
                                     "answer": "测试回答",
                                     "supported_claims": ["模型自行补充的事实"],
                                     "speculative_claims": ["反事实推演"],
@@ -54,6 +55,7 @@ class ModelRouterTests(unittest.TestCase):
             )
 
         self.assertEqual(result["supported_claims"], period["anchors"])
+        self.assertEqual(result["judgement"], "更像一种新工具")
         self.assertIn("模型自行补充的事实", result["speculative_claims"])
         self.assertNotIn("invented-evidence", result["evidence_ids"])
         self.assertEqual(result["evidence_ids"], ["beethoven-p2-e1"])

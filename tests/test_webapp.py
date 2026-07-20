@@ -1,5 +1,6 @@
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 from fastapi.testclient import TestClient
@@ -75,12 +76,41 @@ class WebAppTests(unittest.TestCase):
         body = answer.json()
         self.assertEqual(body["figure_name"], "路德维希·范·贝多芬")
         self.assertEqual(body["period_label"], "维也纳：突破与听觉危机")
+        self.assertIn("新工具", body["judgement"])
         self.assertEqual(
             body["supported_claims"][0],
             "以演奏、出版和赞助网络建立独立作曲家地位。",
         )
         self.assertEqual(body["evidence_ids"], ["beethoven-p2-e1"])
         self.assertIn("不代表人物真实说过", body["boundary_note"])
+
+    def test_personal_mirror_can_be_asked_without_exposing_raw_data(self):
+        payload = {
+            "question": "我在什么情况下更可能改变原来的判断？",
+            "model_id": "evidence-synthesis",
+            "history": [],
+            "allow_cloud": False,
+        }
+        self.assertEqual(self.client.post("/api/me/ask", json=payload).status_code, 401)
+        self.client.post("/api/login", json={"password": "test-password"})
+        answer = self.client.post("/api/me/ask", json=payload)
+        self.assertEqual(answer.status_code, 200)
+        body = answer.json()
+        self.assertEqual(body["mirror_id"], "personal")
+        self.assertIn("工作假设", body["judgement"])
+        self.assertNotIn("source_relative_path", str(body))
+
+        with patch.dict(
+            "os.environ",
+            {"GEMINI_API_KEY": "synthetic-key"},
+            clear=False,
+        ):
+            denied = self.client.post(
+                "/api/me/ask",
+                json=payload | {"model_id": "gemini"},
+            )
+        self.assertEqual(denied.status_code, 422)
+        self.assertIn("明确授权", denied.json()["detail"])
 
     def test_unknown_or_malformed_figure_returns_not_found(self):
         self.assertEqual(self.client.get("/api/public/figures/nope").status_code, 404)

@@ -10,8 +10,8 @@
     <meta property="og:description" content="不是替历史人物读心，而是让每一种推断都能被追问。" />
     <meta property="og:image" content="https://mirror.learnpath.tech/assets/og.png" />
     <title>Mirror Atlas · 历史人物数字切片</title>
-    <link rel="stylesheet" href="/assets/styles.css?v=20260720b" />
-    <script src="/assets/app.js?v=20260720b" defer></script>
+    <link rel="stylesheet" href="/assets/styles.css?v=20260720c" />
+    <script src="/assets/app.js?v=20260720c" defer></script>
   </head>
   <body>
     <div class="paper-grain" aria-hidden="true"></div>
@@ -146,6 +146,17 @@
               <div><div class="profile-section-head compact"><span>03</span><h2>仍在拉扯的轴</h2></div><div class="profile-tensions" id="profile-tensions"></div></div>
             </section>
             <div class="profile-boundary" id="profile-boundary"></div>
+            <section class="personal-ask-studio">
+              <div class="profile-section-head"><span>04</span><h2>直接问你的镜像</h2><p>让多个模型独立读取同一份聚合画像</p></div>
+              <div class="personal-ask-models"><span>参与判断的模型 · 可多选</span><div id="personal-model-choices"></div></div>
+              <label class="cloud-consent"><input id="personal-cloud-consent" type="checkbox" /><span>允许把上方聚合指标发送给所选云模型；不会发送聊天原文、源路径或身份信息</span></label>
+              <div class="personal-ask-thread" id="personal-ask-thread"></div>
+              <form class="ask-form personal-ask-form" id="personal-ask-form">
+                <textarea id="personal-question" maxlength="1200" required placeholder="例如：按现有记录，我在什么情况下更可能临场改道？"></textarea>
+                <button id="personal-ask-button" type="submit">让多个模型判断 ↗</button>
+              </form>
+              <p class="ask-footnote" id="personal-ask-status">这是工作模型，不是人格诊断；不同模型的分歧会原样保留。</p>
+            </section>
           </section>
           <div class="private-empty" id="private-empty"><h2>还没有私人切片</h2><p>这里永远不会读取历史人物档案。</p></div>
           <article class="private-event" id="private-event" hidden>

@@ -9,10 +9,15 @@ const state = {
   running: false,
   models: [],
   currentPeriodId: null,
-  askModelId: "evidence-synthesis",
+  currentSliceId: null,
+  askModelIds: [],
   askMode: "grounded",
   askMessages: [],
   asking: false,
+  personalAskModelIds: [],
+  personalAskMessages: [],
+  personalAsking: false,
+  personalCloudConsent: false,
 };
 
 const $ = (selector) => document.querySelector(selector);
@@ -105,7 +110,9 @@ function textList(items, className = "") {
 function renderFigure(profile) {
   state.currentFigure = profile;
   renderFigureList();
-  const slice = profile.slices[0];
+  if (!profile.slices.some((item) => item.slice_id === state.currentSliceId)) state.currentSliceId = profile.slices[0]?.slice_id || null;
+  const sliceIndex = profile.slices.findIndex((item) => item.slice_id === state.currentSliceId);
+  const slice = profile.slices[Math.max(0, sliceIndex)];
   const root = $("#figure-dossier");
   root.replaceChildren();
   root.className = `figure-dossier accent-${profile.accent}`;
@@ -134,7 +141,7 @@ function renderFigure(profile) {
 
   const sliceHead = el("section", "slice-head");
   const chronology = el("div", "slice-chronology");
-  chronology.append(el("span", "", "DIGITAL SLICE / 01"), el("b", "", slice.date_label));
+  chronology.append(el("span", "", `DIGITAL SLICE / ${String(sliceIndex + 1).padStart(2, "0")}`), el("b", "", slice.date_label));
   const sliceCopy = el("div");
   sliceCopy.append(el("h3", "", slice.title), el("p", "slice-question", slice.question), el("p", "slice-context", slice.context));
   sliceHead.append(chronology, sliceCopy);
@@ -166,7 +173,23 @@ function renderFigure(profile) {
   slice.evidence.forEach((item) => evidenceGrid.append(evidenceCard(item)));
   evidenceSection.append(evidenceTitle, evidenceGrid);
 
-  root.append(mast, facts, note, sliceHead, boundary, hypothesisSection, tensionSection, evidenceSection, renderQuestionStudio(profile));
+  const sliceTabs = el("div", "slice-tabs");
+  profile.slices.forEach((item, index) => {
+    const button = el("button", item.slice_id === state.currentSliceId ? "active" : "");
+    button.type = "button";
+    button.append(el("span", "", String(index + 1).padStart(2, "0")), el("b", "", item.date_label), el("small", "", item.title));
+    button.addEventListener("click", () => {
+      state.currentSliceId = item.slice_id;
+      const matchingPeriod = profile.periods?.find((period) => period.source_slice_ids?.includes(item.slice_id));
+      if (matchingPeriod) state.currentPeriodId = matchingPeriod.period_id;
+      state.askMessages = [];
+      renderFigure(profile);
+    });
+    sliceTabs.append(button);
+  });
+  root.append(mast, facts, note);
+  if (profile.slices.length > 1) root.append(sliceTabs);
+  root.append(sliceHead, boundary, hypothesisSection, tensionSection, evidenceSection, renderQuestionStudio(profile));
 }
 
 function askList(title, items, className = "") {
@@ -175,6 +198,34 @@ function askList(title, items, className = "") {
   if (!items.length) section.append(el("p", "ask-none", "本轮没有可列出的内容"));
   else section.append(textList(items));
   return section;
+}
+
+function comparisonEntryCard(entry) {
+  const answer = el("article", "ask-message answer mirror-answer-card");
+  if (entry.error) {
+    answer.append(el("span", "", entry.modelLabel), el("h4", "", "暂未形成判断"), el("p", "", entry.error));
+    return answer;
+  }
+  const scopeLabel = entry.result.period_label || entry.result.mirror_title;
+  answer.append(
+    el("span", "", `${scopeLabel} · ${entry.result.model.label}`),
+    el("h4", "mirror-judgement", entry.result.judgement),
+    el("p", "ask-main-answer", entry.result.answer),
+  );
+  const layers = el("div", "ask-answer-layers");
+  layers.append(askList("记录支持", entry.result.supported_claims), askList("模型推演", entry.result.speculative_claims, "speculative"), askList("仍然未知", entry.result.unknowns, "unknown"));
+  answer.append(layers, el("small", "", entry.result.boundary_note));
+  return answer;
+}
+
+function comparisonHistory(messages) {
+  const turns = [];
+  messages.forEach((item) => {
+    turns.push({role: "user", content: item.question});
+    const combined = item.results.filter((entry) => entry.result).map((entry) => `${entry.result.model.label}：${entry.result.answer}`).join("\n").slice(0, 1500);
+    if (combined) turns.push({role: "assistant", content: combined});
+  });
+  return turns.slice(-10);
 }
 
 function renderQuestionStudio(profile) {
@@ -196,6 +247,7 @@ function renderQuestionStudio(profile) {
     button.append(el("span", "", item.range), el("b", "", item.label));
     button.addEventListener("click", () => {
       state.currentPeriodId = item.period_id;
+      if (item.source_slice_ids?.length) state.currentSliceId = item.source_slice_ids[0];
       state.askMessages = [];
       renderFigure(profile);
       $("#ask-studio").scrollIntoView({ behavior: "smooth", block: "start" });
@@ -214,18 +266,23 @@ function renderQuestionStudio(profile) {
   }
 
   const controls = el("div", "ask-controls");
-  const modelLabel = el("label");
-  modelLabel.append(el("span", "", "回答模型"));
-  const modelSelect = el("select");
+  const modelPicker = el("div", "ask-model-picker");
+  modelPicker.append(el("span", "", "参与判断的模型 · 可多选"));
+  const modelChoices = el("div", "ask-model-choices");
   state.models.forEach((model) => {
-    const option = el("option", "", `${model.label}${model.available ? "" : " · 未配置"}`);
-    option.value = model.model_id;
-    option.disabled = !model.available;
-    option.selected = model.model_id === state.askModelId;
-    modelSelect.append(option);
+    const selected = state.askModelIds.includes(model.model_id);
+    const button = el("button", selected ? "active" : "", `${model.label}${model.available ? "" : " · 未配置"}`);
+    button.type = "button";
+    button.disabled = !model.available;
+    button.setAttribute("aria-pressed", String(selected));
+    button.addEventListener("click", () => {
+      if (selected && state.askModelIds.length > 1) state.askModelIds = state.askModelIds.filter((id) => id !== model.model_id);
+      else if (!selected && state.askModelIds.length < 4) state.askModelIds = [...state.askModelIds, model.model_id];
+      renderFigure(profile);
+    });
+    modelChoices.append(button);
   });
-  modelSelect.addEventListener("change", () => { state.askModelId = modelSelect.value; });
-  modelLabel.append(modelSelect);
+  modelPicker.append(modelChoices);
   const modeGroup = el("div", "ask-mode");
   [{id: "grounded", label: "史料优先"}, {id: "counterfactual", label: "反事实推演"}].forEach((mode) => {
     const button = el("button", state.askMode === mode.id ? "active" : "", mode.label);
@@ -233,7 +290,7 @@ function renderQuestionStudio(profile) {
     button.addEventListener("click", () => { state.askMode = mode.id; renderFigure(profile); });
     modeGroup.append(button);
   });
-  controls.append(modelLabel, modeGroup);
+  controls.append(modelPicker, modeGroup);
   studio.append(controls);
 
   const thread = el("div", "ask-thread");
@@ -250,15 +307,9 @@ function renderQuestionStudio(profile) {
   state.askMessages.forEach((message) => {
     const question = el("article", "ask-message user");
     question.append(el("span", "", "你的问题"), el("p", "", message.question));
-    const answer = el("article", "ask-message answer");
-    if (message.error) answer.append(el("span", "", "暂未回答"), el("p", "", message.error));
-    else {
-      answer.append(el("span", "", `${message.result.period_label} · ${message.result.model.label}`), el("p", "ask-main-answer", message.result.answer));
-      const layers = el("div", "ask-answer-layers");
-      layers.append(askList("史料支持", message.result.supported_claims), askList("创造性推演", message.result.speculative_claims, "speculative"), askList("仍然未知", message.result.unknowns, "unknown"));
-      answer.append(layers, el("small", "", message.result.boundary_note));
-    }
-    thread.append(question, answer);
+    const comparison = el("div", "mirror-comparison");
+    message.results.forEach((entry) => comparison.append(comparisonEntryCard(entry)));
+    thread.append(question, comparison);
   });
   studio.append(thread);
 
@@ -269,7 +320,7 @@ function renderQuestionStudio(profile) {
   input.placeholder = `问 ${profile.name} 的“${period?.label || "当前"}”时期…`;
   input.maxLength = 1200;
   input.required = true;
-  const submit = el("button", "", state.asking ? "正在推演…" : "向这个时期提问 ↗");
+  const submit = el("button", "", state.asking ? `正在等待 ${state.askModelIds.length} 个模型…` : `让 ${state.askModelIds.length} 个模型同时判断 ↗`);
   submit.type = "submit";
   submit.disabled = state.asking || !period;
   form.append(input, submit);
@@ -280,22 +331,25 @@ function renderQuestionStudio(profile) {
     state.asking = true;
     renderFigure(profile);
     try {
-      const history = state.askMessages.filter((item) => item.result).flatMap((item) => [
-        {role: "user", content: item.question},
-        {role: "assistant", content: item.result.answer},
-      ]).slice(-10);
-      const result = await api("/api/ask", { method: "POST", body: JSON.stringify({figure_id: profile.figure_id, period_id: state.currentPeriodId, question, model_id: state.askModelId, mode: state.askMode, history}) });
-      state.askMessages.push({question, result});
-    } catch (error) {
-      const message = error.status === 401 ? "提问功能需要登录私人会话；请先进入“我的镜像”登录，再返回人物馆。" : error.message;
-      state.askMessages.push({question, error: message});
+      const history = comparisonHistory(state.askMessages);
+      const selectedModels = state.models.filter((model) => state.askModelIds.includes(model.model_id));
+      const results = await Promise.all(selectedModels.map(async (model) => {
+        try {
+          const result = await api("/api/ask", { method: "POST", body: JSON.stringify({figure_id: profile.figure_id, period_id: state.currentPeriodId, question, model_id: model.model_id, mode: state.askMode, history}) });
+          return {modelLabel: model.label, result};
+        } catch (error) {
+          const message = error.status === 401 ? "需要先登录私人会话" : error.message;
+          return {modelLabel: model.label, error: message};
+        }
+      }));
+      state.askMessages.push({question, results});
     } finally {
       state.asking = false;
       renderFigure(profile);
       $("#ask-studio").scrollIntoView({ behavior: "smooth", block: "start" });
     }
   });
-  studio.append(form, el("p", "ask-footnote", "页面只把所选人物与所选时期的材料发送给模型；不同人物、不同私人与历史租户之间不共享记忆。"));
+  studio.append(form, el("p", "ask-footnote", "每个模型独立作答，页面不让任何一个模型替其他模型总结；人物、时期和私人租户之间仍保持隔离。"));
   return studio;
 }
 
@@ -303,6 +357,7 @@ async function selectFigure(figureId) {
   try {
     if (state.currentFigure?.figure_id !== figureId) {
       state.currentPeriodId = null;
+      state.currentSliceId = null;
       state.askMessages = [];
     }
     const profile = await api(`/api/public/figures/${encodeURIComponent(figureId)}`);
@@ -316,7 +371,10 @@ async function initializePublic() {
   try {
     const [data, models] = await Promise.all([api("/api/public/figures"), api(`/api/public/models?ts=${Date.now()}`)]);
     state.models = models.models;
-    if (!state.models.some((item) => item.model_id === state.askModelId && item.available)) state.askModelId = state.models.find((item) => item.available)?.model_id || "evidence-synthesis";
+    const externalModels = state.models.filter((item) => item.available && item.model_id !== "evidence-synthesis");
+    const defaultModelIds = (externalModels.length ? externalModels : state.models.filter((item) => item.available)).slice(0, 4).map((item) => item.model_id);
+    state.askModelIds = [...defaultModelIds];
+    state.personalAskModelIds = [...defaultModelIds];
     state.figures = data.figures.sort((a, b) => figureOrder.indexOf(a.figure_id) - figureOrder.indexOf(b.figure_id));
     renderFigureList();
     if (state.figures.length) await selectFigure(state.figures[0].figure_id);
@@ -396,6 +454,73 @@ function renderPersonalProfile() {
     const row = el("article"); row.append(el("span", "", item.domain), el("p", "", item.text)); tensions.append(row);
   });
   $("#profile-boundary").textContent = profile.data_boundary.note;
+  renderPersonalAskStudio();
+}
+
+function renderPersonalAskStudio() {
+  const choices = $("#personal-model-choices");
+  choices.replaceChildren();
+  state.models.forEach((model) => {
+    const selected = state.personalAskModelIds.includes(model.model_id);
+    const button = el("button", selected ? "active" : "", `${model.label}${model.available ? "" : " · 未配置"}`);
+    button.type = "button";
+    button.disabled = !model.available;
+    button.setAttribute("aria-pressed", String(selected));
+    button.addEventListener("click", () => {
+      if (selected && state.personalAskModelIds.length > 1) state.personalAskModelIds = state.personalAskModelIds.filter((id) => id !== model.model_id);
+      else if (!selected && state.personalAskModelIds.length < 4) state.personalAskModelIds = [...state.personalAskModelIds, model.model_id];
+      renderPersonalAskStudio();
+    });
+    choices.append(button);
+  });
+  const consent = $("#personal-cloud-consent");
+  consent.checked = state.personalCloudConsent;
+  const selectedModels = state.models.filter((model) => state.personalAskModelIds.includes(model.model_id));
+  const needsConsent = selectedModels.some((model) => !model.local);
+  const submit = $("#personal-ask-button");
+  submit.textContent = state.personalAsking ? `正在等待 ${selectedModels.length} 个模型…` : `让 ${selectedModels.length} 个模型同时判断 ↗`;
+  submit.disabled = state.personalAsking || !selectedModels.length || (needsConsent && !state.personalCloudConsent);
+  $("#personal-ask-status").textContent = needsConsent && !state.personalCloudConsent
+    ? "勾选授权后才会向云模型发送聚合指标；聊天原文始终不会上传。"
+    : "这是工作模型，不是人格诊断；不同模型的分歧会原样保留。";
+
+  const thread = $("#personal-ask-thread");
+  thread.replaceChildren();
+  state.personalAskMessages.forEach((message) => {
+    const question = el("article", "ask-message user");
+    question.append(el("span", "", "你问自己的镜像"), el("p", "", message.question));
+    const comparison = el("div", "mirror-comparison");
+    message.results.forEach((entry) => comparison.append(comparisonEntryCard(entry)));
+    thread.append(question, comparison);
+  });
+}
+
+async function runPersonalQuestion(event) {
+  event.preventDefault();
+  const input = $("#personal-question");
+  const question = input.value.trim();
+  if (!question || state.personalAsking) return;
+  const selectedModels = state.models.filter((model) => state.personalAskModelIds.includes(model.model_id));
+  if (!selectedModels.length) return;
+  state.personalAsking = true;
+  renderPersonalAskStudio();
+  try {
+    const history = comparisonHistory(state.personalAskMessages);
+    const results = await Promise.all(selectedModels.map(async (model) => {
+      try {
+        const result = await api("/api/me/ask", {method: "POST", body: JSON.stringify({question, model_id: model.model_id, history, allow_cloud: state.personalCloudConsent})});
+        return {modelLabel: model.label, result};
+      } catch (error) {
+        return {modelLabel: model.label, error: error.message};
+      }
+    }));
+    state.personalAskMessages.push({question, results});
+    input.value = "";
+  } finally {
+    state.personalAsking = false;
+    renderPersonalAskStudio();
+    $(".personal-ask-studio").scrollIntoView({behavior: "smooth", block: "start"});
+  }
 }
 
 function showPersonalProfile() {
@@ -490,6 +615,11 @@ async function runPrediction() {
 
 $("#open-private").addEventListener("click", openPrivate);
 $("#profile-nav").addEventListener("click", showPersonalProfile);
+$("#personal-cloud-consent").addEventListener("change", (event) => {
+  state.personalCloudConsent = event.target.checked;
+  renderPersonalAskStudio();
+});
+$("#personal-ask-form").addEventListener("submit", runPersonalQuestion);
 $("#back-public").addEventListener("click", closePrivate);
 $("#login-form").addEventListener("submit", async (event) => {
   event.preventDefault();

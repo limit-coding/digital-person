@@ -33,6 +33,8 @@ class HistoricalCatalogTests(unittest.TestCase):
 
         self.assertEqual(len(catalog["ludwig-van-beethoven"]["periods"]), 3)
         self.assertEqual(len(catalog["isaac-newton"]["periods"]), 3)
+        self.assertEqual(len(catalog["mao-zedong"]["periods"]), 3)
+        self.assertEqual(len(catalog["mao-zedong"]["slices"]), 3)
 
     def test_public_summary_does_not_embed_evidence(self):
         profile = load_catalog()["charles-darwin"]

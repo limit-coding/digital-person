@@ -156,6 +156,12 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .method-note span { color: var(--accent); font-size: 9px; font-weight: 700; letter-spacing: .14em; }
 .method-note p { margin: 0; color: var(--muted); font-family: var(--serif); font-size: 13px; line-height: 1.8; }
 
+.slice-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 45px; }
+.slice-tabs button { display: grid; grid-template-columns: 28px 1fr; gap: 4px 8px; min-height: 90px; padding: 14px; border: 1px solid var(--hairline); border-radius: 9px; cursor: pointer; text-align: left; color: var(--ink); background: transparent; }
+.slice-tabs button.active { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.slice-tabs span { grid-row: 1 / 3; color: var(--accent); font-size: 8px; }
+.slice-tabs b { font-family: var(--serif); font-size: 14px; font-weight: 500; }
+.slice-tabs small { color: var(--muted); font-size: 8px; line-height: 1.4; }
 .slice-head { display: grid; grid-template-columns: 150px 1fr; gap: 28px; padding: 68px 0 40px; }
 .slice-chronology { border-top: 2px solid var(--accent); padding-top: 10px; }
 .slice-chronology span, .slice-chronology b { display: block; }
@@ -294,6 +300,16 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .profile-tensions span { color: #b7ff65; font-size: 8px; }
 .profile-tensions p { margin: 0; color: #aeb2ba; font-size: 9px; line-height: 1.55; }
 .profile-boundary { margin-top: 55px; padding: 16px 18px; border-left: 2px solid #b7ff65; color: #767c87; background: rgba(183,255,101,.035); font-size: 9px; line-height: 1.7; }
+.personal-ask-studio { margin-top: 70px; padding-top: 55px; border-top: 1px solid rgba(255,255,255,.1); scroll-margin-top: 20px; }
+.personal-ask-models > span { display: block; margin-bottom: 8px; color: #747b86; font-size: 8px; }
+.personal-ask-models > div { display: flex; flex-wrap: wrap; gap: 5px; }
+.personal-ask-models button { padding: 9px 11px; border: 1px solid rgba(255,255,255,.1); border-radius: 8px; cursor: pointer; color: #757b86; background: #171b23; font-size: 9px; }
+.personal-ask-models button.active { border-color: rgba(183,255,101,.5); color: #dfffc0; background: rgba(183,255,101,.09); }
+.personal-ask-models button:disabled { cursor: not-allowed; opacity: .38; }
+.cloud-consent { display: flex; gap: 9px; align-items: start; margin-top: 16px; color: #7f8590; font-size: 9px; line-height: 1.55; }
+.cloud-consent input { margin-top: 1px; accent-color: #b7ff65; }
+.personal-ask-thread { display: grid; gap: 10px; margin-top: 24px; }
+.personal-ask-form { margin-top: 24px; }
 .private-empty { min-height: 60vh; display: grid; place-content: center; text-align: center; }
 .private-empty p { color: #747a85; }
 .private-event-head p { margin: 0 0 13px; color: #b7ff65; font-size: 9px; letter-spacing: .14em; text-transform: uppercase; }
@@ -351,8 +367,11 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .period-frame > div { display: flex; flex-wrap: wrap; gap: 5px; }
 .period-frame > div b { padding: 6px 8px; color: #7d838d; background: rgba(255,255,255,.04); font-size: 8px; font-weight: 400; }
 .ask-controls { display: flex; justify-content: space-between; align-items: end; gap: 20px; margin-top: 27px; }
-.ask-controls label span { display: block; margin-bottom: 7px; color: #737985; font-size: 8px; }
-.ask-controls select { min-width: 230px; padding: 10px 32px 10px 11px; border: 1px solid rgba(255,255,255,.11); border-radius: 8px; color: #d4d6dc; background: #171b23; font-size: 10px; }
+.ask-model-picker > span { display: block; margin-bottom: 7px; color: #737985; font-size: 8px; }
+.ask-model-choices { display: flex; flex-wrap: wrap; gap: 5px; }
+.ask-model-choices button { padding: 9px 11px; border: 1px solid rgba(255,255,255,.1); border-radius: 8px; cursor: pointer; color: #757b86; background: #171b23; font-size: 9px; }
+.ask-model-choices button.active { border-color: rgba(155,133,255,.55); color: #ddd7ff; background: rgba(155,133,255,.13); }
+.ask-model-choices button:disabled { cursor: not-allowed; opacity: .38; }
 .ask-mode { display: flex; padding: 3px; border: 1px solid rgba(255,255,255,.09); border-radius: 9px; }
 .ask-mode button { padding: 8px 11px; border: 0; border-radius: 6px; cursor: pointer; color: #747a84; background: transparent; font-size: 9px; }
 .ask-mode button.active { color: #101319; background: #b7ff65; }
@@ -364,6 +383,9 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .ask-message > p { margin: 8px 0 0; font-size: 11px; line-height: 1.72; }
 .ask-message.user { margin-left: 14%; background: rgba(155,133,255,.11); }
 .ask-message.answer { margin-right: 5%; border: 1px solid rgba(183,255,101,.12); background: rgba(183,255,101,.035); }
+.mirror-comparison { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 9px; }
+.mirror-answer-card { min-width: 0; margin-right: 0 !important; }
+.mirror-judgement { margin: 10px 0 0; color: #b7ff65; font-family: var(--serif); font-size: 22px; font-weight: 500; line-height: 1.25; }
 .ask-main-answer { color: #d3d5da; font-family: var(--serif); font-size: 16px !important; }
 .ask-answer-layers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; margin-top: 18px; }
 .ask-answer-list { padding: 12px; background: rgba(255,255,255,.025); }
@@ -426,6 +448,8 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .dossier-identity h3 { font-size: 44px; }
   .dossier-facts { grid-template-columns: 1fr 1fr; }
   .method-note, .slice-head { grid-template-columns: 1fr; }
+  .slice-tabs { display: flex; overflow-x: auto; }
+  .slice-tabs button { min-width: 240px; }
   .knowledge-boundary { grid-template-columns: 1fr; }
   .knowledge-boundary article + article { border-left: 0; border-top: 1px solid var(--ink); }
   .dossier-section-title { grid-template-columns: 30px 1fr; }
@@ -458,6 +482,6 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .result-pair { grid-template-columns: 1fr; }
   .period-tabs, .ask-answer-layers { grid-template-columns: 1fr; }
   .ask-controls, .ask-form { display: grid; grid-template-columns: 1fr; }
-  .ask-controls select { width: 100%; }
+  .ask-model-choices { display: grid; grid-template-columns: 1fr 1fr; }
   .ask-form button { min-height: 52px; }
 }

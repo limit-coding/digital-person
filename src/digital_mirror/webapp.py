@@ -32,7 +32,13 @@ from .historical_catalog import (
     public_summary,
 )
 from .local_baseline import run_with_retries
-from .model_router import ModelUnavailableError, answer_historical_question, model_specs
+from .model_router import (
+    CloudConsentRequiredError,
+    ModelUnavailableError,
+    answer_historical_question,
+    answer_personal_question,
+    model_specs,
+)
 from .personal_profile import build_personal_snapshot
 from .replay import compile_replay_case, load_json, score_prediction
 
@@ -163,6 +169,29 @@ class HistoricalAnswerResponse(BaseModel):
     period_label: str
     model: ModelView
     mode: Literal["grounded", "counterfactual"]
+    judgement: str
+    answer: str
+    supported_claims: list[str]
+    speculative_claims: list[str]
+    unknowns: list[str]
+    evidence_ids: list[str]
+    follow_up_questions: list[str]
+    boundary_note: str
+
+
+class PersonalQuestionRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    question: str = Field(min_length=2, max_length=1200)
+    model_id: str = Field(default="evidence-synthesis", min_length=1, max_length=80)
+    history: list[ChatTurn] = Field(default_factory=list, max_length=12)
+    allow_cloud: bool = False
+
+
+class PersonalAnswerResponse(BaseModel):
+    mirror_id: Literal["personal"]
+    mirror_title: str
+    model: ModelView
+    judgement: str
     answer: str
     supported_claims: list[str]
     speculative_claims: list[str]
@@ -609,6 +638,52 @@ def create_app(
             episode_map(settings.episode_root).values()
         )
         return PersonalProfileResponse.model_validate(snapshot)
+
+    @app.post(
+        "/api/me/ask",
+        response_model=PersonalAnswerResponse,
+        dependencies=[Depends(require_session)],
+    )
+    def ask_personal_mirror(
+        payload: PersonalQuestionRequest,
+        request: Request,
+    ) -> PersonalAnswerResponse:
+        if sum(len(item.content) for item in payload.history) > 6000:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+                detail="对话历史过长",
+            )
+        if not question_limiter.allow(client_key(request)):
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                detail="本小时提问次数已达上限",
+            )
+        snapshot = build_personal_snapshot(episode_map(settings.episode_root).values())
+        try:
+            result = answer_personal_question(
+                snapshot,
+                payload.question,
+                payload.model_id,
+                [item.model_dump() for item in payload.history],
+                payload.allow_cloud,
+            )
+        except ModelUnavailableError as exc:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+                detail="所选模型当前不可用",
+            ) from exc
+        except CloudConsentRequiredError as exc:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+                detail="发送私人聚合画像到云模型前需要明确授权",
+            ) from exc
+        except Exception as exc:
+            LOGGER.error("Personal question failed: %s", type(exc).__name__)
+            raise HTTPException(
+                status_code=status.HTTP_502_BAD_GATEWAY,
+                detail="模型回答失败，请稍后重试或切换模型",
+            ) from exc
+        return PersonalAnswerResponse.model_validate(result)
 
     @app.post(
         "/api/ask",
