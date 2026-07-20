@@ -24,8 +24,16 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field
 
 from .cloud_baseline import cloud_safety_errors, deepseek_generator
-from .historical_catalog import FIGURE_ID_RE, load_catalog, public_summary
+from .historical_catalog import (
+    FIGURE_ID_RE,
+    PERIOD_ID_RE,
+    load_catalog,
+    period_from_profile,
+    public_summary,
+)
 from .local_baseline import run_with_retries
+from .model_router import ModelUnavailableError, answer_historical_question, model_specs
+from .personal_profile import build_personal_snapshot
 from .replay import compile_replay_case, load_json, score_prediction
 
 
@@ -35,6 +43,10 @@ SESSION_COOKIE = "digital_mirror_session"
 PredictionRunner = Callable[
     [dict[str, Any], dict[str, Any], Literal["enabled", "disabled"]],
     tuple[dict[str, Any], int],
+]
+HistoricalAnswerRunner = Callable[
+    [dict[str, Any], dict[str, Any], str, str, str, list[dict[str, str]]],
+    dict[str, Any],
 ]
 
 
@@ -48,6 +60,7 @@ class Settings:
     cookie_secure: bool = True
     session_ttl_seconds: int = 12 * 60 * 60
     prediction_limit_per_hour: int = 12
+    question_limit_per_hour: int = 30
 
     @classmethod
     def from_environment(cls) -> "Settings":
@@ -81,6 +94,9 @@ class Settings:
             prediction_limit_per_hour=int(
                 os.environ.get("DIGITAL_MIRROR_PREDICTION_LIMIT_PER_HOUR", "12")
             ),
+            question_limit_per_hour=int(
+                os.environ.get("DIGITAL_MIRROR_QUESTION_LIMIT_PER_HOUR", "30")
+            ),
         )
 
     @property
@@ -108,6 +124,52 @@ class HealthResponse(BaseModel):
 
 class PublicFigureListResponse(BaseModel):
     figures: list[dict[str, Any]]
+
+
+class ModelView(BaseModel):
+    model_id: str
+    label: str
+    provider: str
+    model: str
+    available: bool
+    local: bool
+    note: str
+
+
+class ModelListResponse(BaseModel):
+    models: list[ModelView]
+
+
+class ChatTurn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    role: Literal["user", "assistant"]
+    content: str = Field(min_length=1, max_length=1600)
+
+
+class HistoricalQuestionRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    figure_id: str = Field(min_length=1, max_length=80, pattern=FIGURE_ID_RE.pattern)
+    period_id: str = Field(min_length=1, max_length=120, pattern=PERIOD_ID_RE.pattern)
+    question: str = Field(min_length=2, max_length=1200)
+    model_id: str = Field(default="evidence-synthesis", min_length=1, max_length=80)
+    mode: Literal["grounded", "counterfactual"] = "grounded"
+    history: list[ChatTurn] = Field(default_factory=list, max_length=12)
+
+
+class HistoricalAnswerResponse(BaseModel):
+    figure_id: str
+    figure_name: str
+    period_id: str
+    period_label: str
+    model: ModelView
+    mode: Literal["grounded", "counterfactual"]
+    answer: str
+    supported_claims: list[str]
+    speculative_claims: list[str]
+    unknowns: list[str]
+    evidence_ids: list[str]
+    follow_up_questions: list[str]
+    boundary_note: str
 
 
 class OptionView(BaseModel):
@@ -148,6 +210,82 @@ class EventDetail(EventSummary):
 
 class EventListResponse(BaseModel):
     events: list[EventSummary]
+
+
+class PersonalConfidenceView(BaseModel):
+    label: str
+    score: float
+    note: str
+
+
+class PersonalCoverageView(BaseModel):
+    event_count: int
+    domain_count: int
+    evidence_count: int
+    judgement_count: int
+    observed_action_count: int
+    outcome_count: int
+    date_from: str | None = None
+    date_to: str | None = None
+
+
+class PersonalMetricsView(BaseModel):
+    average_deliberation: float | None = None
+    average_considered_options: float | None = None
+    judgement_action_alignment: float | None = None
+    action_observation_rate: float | None = None
+    pivot_count: int
+
+
+class PersonalSignalView(BaseModel):
+    signal_id: str
+    label: str
+    value: str
+    note: str
+    support: str
+
+
+class PersonalDomainView(BaseModel):
+    domain: str
+    label: str
+    count: int
+    share: float
+
+
+class PersonalTensionView(BaseModel):
+    domain: str
+    text: str
+    episode_id: str
+
+
+class PersonalRecentEventView(BaseModel):
+    episode_id: str
+    domain: str
+    domain_label: str
+    date: str
+    question: str
+
+
+class PersonalBoundaryView(BaseModel):
+    private: bool
+    historical_profiles_used: bool
+    raw_source_text_exposed: bool
+    note: str
+
+
+class PersonalProfileResponse(BaseModel):
+    mirror_id: Literal["personal"]
+    title: str
+    subtitle: str
+    status: Literal["empty", "growing"]
+    confidence: PersonalConfidenceView
+    coverage: PersonalCoverageView
+    decision_metrics: PersonalMetricsView
+    signals: list[PersonalSignalView]
+    domains: list[PersonalDomainView]
+    active_tensions: list[PersonalTensionView]
+    recent_events: list[PersonalRecentEventView]
+    data_boundary: PersonalBoundaryView
 
 
 class PredictionRequest(BaseModel):
@@ -312,15 +450,20 @@ def default_prediction_runner(
 def create_app(
     settings: Settings | None = None,
     prediction_runner: PredictionRunner | None = None,
+    historical_answer_runner: HistoricalAnswerRunner | None = None,
     static_root: Path | None = None,
 ) -> FastAPI:
     settings = settings or Settings.from_environment()
     prediction_runner = prediction_runner or default_prediction_runner
+    historical_answer_runner = historical_answer_runner or answer_historical_question
     static_root = static_root or Path(__file__).with_name("web_static")
     signer = SessionSigner(settings.session_secret, settings.session_ttl_seconds)
     login_limiter = SlidingWindowLimiter(limit=10, window_seconds=10 * 60)
     prediction_limiter = SlidingWindowLimiter(
         limit=settings.prediction_limit_per_hour, window_seconds=60 * 60
+    )
+    question_limiter = SlidingWindowLimiter(
+        limit=settings.question_limit_per_hour, window_seconds=60 * 60
     )
     prediction_lock = threading.Lock()
 
@@ -351,6 +494,7 @@ def create_app(
             response.headers["Cache-Control"] = (
                 "public, max-age=300"
                 if request.url.path.startswith("/api/public/")
+                and request.url.path != "/api/public/models"
                 else "no-store"
             )
         return response
@@ -393,6 +537,12 @@ def create_app(
         if not profile:
             raise HTTPException(status_code=404, detail="人物不存在")
         return profile
+
+    @app.get("/api/public/models", response_model=ModelListResponse)
+    def list_models() -> ModelListResponse:
+        return ModelListResponse(
+            models=[ModelView.model_validate(item.public()) for item in model_specs()]
+        )
 
     @app.get("/api/session", response_model=AuthStatus)
     def session_status(request: Request) -> AuthStatus:
@@ -448,6 +598,64 @@ def create_app(
         events = [summary_from_case(case) for _, case in episode_map(settings.episode_root).values()]
         events.sort(key=lambda item: item.cutoff_at, reverse=True)
         return EventListResponse(events=events)
+
+    @app.get(
+        "/api/me/profile",
+        response_model=PersonalProfileResponse,
+        dependencies=[Depends(require_session)],
+    )
+    def get_personal_profile() -> PersonalProfileResponse:
+        snapshot = build_personal_snapshot(
+            episode_map(settings.episode_root).values()
+        )
+        return PersonalProfileResponse.model_validate(snapshot)
+
+    @app.post(
+        "/api/ask",
+        response_model=HistoricalAnswerResponse,
+        dependencies=[Depends(require_session)],
+    )
+    def ask_historical_period(
+        payload: HistoricalQuestionRequest,
+        request: Request,
+    ) -> HistoricalAnswerResponse:
+        profile = load_catalog(settings.historical_root).get(payload.figure_id)
+        if not profile:
+            raise HTTPException(status_code=404, detail="人物不存在")
+        period = period_from_profile(profile, payload.period_id)
+        if not period:
+            raise HTTPException(status_code=404, detail="人物时期不存在")
+        if sum(len(item.content) for item in payload.history) > 6000:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="对话历史过长",
+            )
+        if not question_limiter.allow(client_key(request)):
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                detail="本小时提问次数已达上限",
+            )
+        try:
+            result = historical_answer_runner(
+                profile,
+                period,
+                payload.question,
+                payload.model_id,
+                payload.mode,
+                [item.model_dump() for item in payload.history],
+            )
+        except ModelUnavailableError as exc:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="所选模型当前不可用",
+            ) from exc
+        except Exception as exc:
+            LOGGER.error("Historical question failed: %s", type(exc).__name__)
+            raise HTTPException(
+                status_code=status.HTTP_502_BAD_GATEWAY,
+                detail="模型回答失败，请稍后重试或切换模型",
+            ) from exc
+        return HistoricalAnswerResponse.model_validate(result)
 
     @app.get(
         "/api/events/{episode_id}",

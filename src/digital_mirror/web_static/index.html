@@ -10,8 +10,8 @@
     <meta property="og:description" content="不是替历史人物读心，而是让每一种推断都能被追问。" />
     <meta property="og:image" content="https://mirror.learnpath.tech/assets/og.png" />
     <title>Mirror Atlas · 历史人物数字切片</title>
-    <link rel="stylesheet" href="/assets/styles.css" />
-    <script src="/assets/app.js" defer></script>
+    <link rel="stylesheet" href="/assets/styles.css?v=20260720b" />
+    <script src="/assets/app.js?v=20260720b" defer></script>
   </head>
   <body>
     <div class="paper-grain" aria-hidden="true"></div>
@@ -47,7 +47,7 @@
             <button class="orbit-person p-darwin" data-figure-jump="charles-darwin" type="button"><b>达</b><span>1858</span></button>
             <button class="orbit-person p-lincoln" data-figure-jump="abraham-lincoln" type="button"><b>林</b><span>1862</span></button>
             <button class="orbit-person p-churchill" data-figure-jump="winston-churchill" type="button"><b>丘</b><span>1940</span></button>
-            <div class="orbit-core"><strong>11</strong><span>人物镜像</span><small>彼此隔离</small></div>
+            <div class="orbit-core"><strong>13</strong><span>人物镜像</span><small>彼此隔离</small></div>
           </div>
         </section>
 
@@ -60,9 +60,9 @@
 
         <section class="atlas-section" id="figures">
           <div class="section-intro">
-            <p class="overline">THE FIRST COLLECTION · 001—004</p>
+            <p class="overline">THE GLOBAL COLLECTION · 001—013</p>
             <h2>人物不是一个答案，<br />而是一组可检验的切片。</h2>
-            <p>首批选择依据史料丰富度、同期记录密度和决策节点清晰度，覆盖政治、战争与科学。</p>
+            <p>选择依据史料丰富度、同期记录密度和决策节点清晰度，覆盖政治、战争、科学、音乐与生态。</p>
           </div>
 
           <div class="atlas-layout">
@@ -130,11 +130,25 @@
         <aside class="private-events">
           <p class="overline">YOUR REPLAY ARCHIVE</p>
           <h2>私人历史切片 <span id="event-count">0</span></h2>
+          <button class="profile-nav active" id="profile-nav" type="button"><span>◎</span><b>镜像总览</b><small>跨事件模式与覆盖度</small></button>
           <div id="event-list"></div>
         </aside>
         <main class="private-stage">
+          <section class="personal-profile" id="personal-profile">
+            <header class="personal-profile-head">
+              <div><p>PERSONAL MIRROR / WORKING MODEL</p><h1 id="profile-title">你的决策镜像</h1><span id="profile-subtitle"></span></div>
+              <div class="profile-confidence"><b id="profile-confidence"></b><span id="profile-confidence-note"></span></div>
+            </header>
+            <div class="profile-stats" id="profile-stats"></div>
+            <section class="profile-section"><div class="profile-section-head"><span>01</span><h2>当前工作假设</h2><p>每个判断都显示支撑样本，不把统计量写成人格定论</p></div><div class="profile-signals" id="profile-signals"></div></section>
+            <section class="profile-grid-section">
+              <div><div class="profile-section-head compact"><span>02</span><h2>领域覆盖</h2></div><div class="profile-domains" id="profile-domains"></div></div>
+              <div><div class="profile-section-head compact"><span>03</span><h2>仍在拉扯的轴</h2></div><div class="profile-tensions" id="profile-tensions"></div></div>
+            </section>
+            <div class="profile-boundary" id="profile-boundary"></div>
+          </section>
           <div class="private-empty" id="private-empty"><h2>还没有私人切片</h2><p>这里永远不会读取历史人物档案。</p></div>
-          <article id="private-event" hidden>
+          <article class="private-event" id="private-event" hidden>
             <div class="private-event-head"><p id="private-tags"></p><h1 id="event-question"></h1><span id="event-cutoff"></span></div>
             <section><h3>当时已知</h3><div class="private-evidence" id="evidence-list"></div></section>
             <section><h3>可能选择</h3><div class="private-options" id="option-grid"></div></section>

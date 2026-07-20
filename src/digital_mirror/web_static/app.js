@@ -3,15 +3,23 @@ const state = {
   currentFigure: null,
   events: [],
   currentEvent: null,
+  personalProfile: null,
+  privateView: "profile",
   thinking: "enabled",
   running: false,
+  models: [],
+  currentPeriodId: null,
+  askModelId: "evidence-synthesis",
+  askMode: "grounded",
+  askMessages: [],
+  asking: false,
 };
 
 const $ = (selector) => document.querySelector(selector);
 const figureOrder = [
   "mao-zedong", "charles-darwin", "abraham-lincoln", "winston-churchill",
   "mahatma-gandhi", "nelson-mandela", "albert-einstein", "simon-bolivar",
-  "liliuokalani", "mustafa-kemal-ataturk", "rachel-carson",
+  "liliuokalani", "mustafa-kemal-ataturk", "rachel-carson", "ludwig-van-beethoven", "isaac-newton",
 ];
 
 async function api(path, options = {}) {
@@ -158,11 +166,145 @@ function renderFigure(profile) {
   slice.evidence.forEach((item) => evidenceGrid.append(evidenceCard(item)));
   evidenceSection.append(evidenceTitle, evidenceGrid);
 
-  root.append(mast, facts, note, sliceHead, boundary, hypothesisSection, tensionSection, evidenceSection);
+  root.append(mast, facts, note, sliceHead, boundary, hypothesisSection, tensionSection, evidenceSection, renderQuestionStudio(profile));
+}
+
+function askList(title, items, className = "") {
+  const section = el("section", `ask-answer-list ${className}`.trim());
+  section.append(el("h5", "", title));
+  if (!items.length) section.append(el("p", "ask-none", "本轮没有可列出的内容"));
+  else section.append(textList(items));
+  return section;
+}
+
+function renderQuestionStudio(profile) {
+  const periods = profile.periods || [];
+  if (!periods.some((item) => item.period_id === state.currentPeriodId)) state.currentPeriodId = periods[0]?.period_id || null;
+  const period = periods.find((item) => item.period_id === state.currentPeriodId);
+  const studio = el("section", "ask-studio");
+  studio.id = "ask-studio";
+  const head = el("header", "ask-head");
+  const copy = el("div");
+  copy.append(el("p", "overline", "ASK / PERIOD-SPECIFIC MIRROR"), el("h3", "", "不只回放事件，直接问这个时期的 TA。"), el("span", "", "事实问题、价值冲突或反事实脑洞都可以；推测部分会单独标出。"));
+  head.append(copy, el("b", "", `${periods.length} 个时期`));
+  studio.append(head);
+
+  const periodTabs = el("div", "period-tabs");
+  periods.forEach((item) => {
+    const button = el("button", item.period_id === state.currentPeriodId ? "active" : "");
+    button.type = "button";
+    button.append(el("span", "", item.range), el("b", "", item.label));
+    button.addEventListener("click", () => {
+      state.currentPeriodId = item.period_id;
+      state.askMessages = [];
+      renderFigure(profile);
+      $("#ask-studio").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    periodTabs.append(button);
+  });
+  studio.append(periodTabs);
+
+  if (period) {
+    const frame = el("article", "period-frame");
+    frame.append(el("span", "", period.headline), el("p", "", period.context));
+    const anchors = el("div");
+    (period.anchors || []).slice(0, 3).forEach((item) => anchors.append(el("b", "", item)));
+    frame.append(anchors);
+    studio.append(frame);
+  }
+
+  const controls = el("div", "ask-controls");
+  const modelLabel = el("label");
+  modelLabel.append(el("span", "", "回答模型"));
+  const modelSelect = el("select");
+  state.models.forEach((model) => {
+    const option = el("option", "", `${model.label}${model.available ? "" : " · 未配置"}`);
+    option.value = model.model_id;
+    option.disabled = !model.available;
+    option.selected = model.model_id === state.askModelId;
+    modelSelect.append(option);
+  });
+  modelSelect.addEventListener("change", () => { state.askModelId = modelSelect.value; });
+  modelLabel.append(modelSelect);
+  const modeGroup = el("div", "ask-mode");
+  [{id: "grounded", label: "史料优先"}, {id: "counterfactual", label: "反事实推演"}].forEach((mode) => {
+    const button = el("button", state.askMode === mode.id ? "active" : "", mode.label);
+    button.type = "button";
+    button.addEventListener("click", () => { state.askMode = mode.id; renderFigure(profile); });
+    modeGroup.append(button);
+  });
+  controls.append(modelLabel, modeGroup);
+  studio.append(controls);
+
+  const thread = el("div", "ask-thread");
+  if (!state.askMessages.length) {
+    const starters = el("div", "ask-starters");
+    ["如果你看到今天的人工智能，会最先质疑什么？", "你这个时期最不愿牺牲的东西是什么？", "如果关键条件反过来，你可能怎样改选？"].forEach((text) => {
+      const button = el("button", "", text);
+      button.type = "button";
+      button.addEventListener("click", () => { const input = $("#period-question"); input.value = text; input.focus(); });
+      starters.append(button);
+    });
+    thread.append(starters);
+  }
+  state.askMessages.forEach((message) => {
+    const question = el("article", "ask-message user");
+    question.append(el("span", "", "你的问题"), el("p", "", message.question));
+    const answer = el("article", "ask-message answer");
+    if (message.error) answer.append(el("span", "", "暂未回答"), el("p", "", message.error));
+    else {
+      answer.append(el("span", "", `${message.result.period_label} · ${message.result.model.label}`), el("p", "ask-main-answer", message.result.answer));
+      const layers = el("div", "ask-answer-layers");
+      layers.append(askList("史料支持", message.result.supported_claims), askList("创造性推演", message.result.speculative_claims, "speculative"), askList("仍然未知", message.result.unknowns, "unknown"));
+      answer.append(layers, el("small", "", message.result.boundary_note));
+    }
+    thread.append(question, answer);
+  });
+  studio.append(thread);
+
+  const form = el("form", "ask-form");
+  const input = el("textarea");
+  input.id = "period-question";
+  input.name = "question";
+  input.placeholder = `问 ${profile.name} 的“${period?.label || "当前"}”时期…`;
+  input.maxLength = 1200;
+  input.required = true;
+  const submit = el("button", "", state.asking ? "正在推演…" : "向这个时期提问 ↗");
+  submit.type = "submit";
+  submit.disabled = state.asking || !period;
+  form.append(input, submit);
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const question = input.value.trim();
+    if (!question || state.asking) return;
+    state.asking = true;
+    renderFigure(profile);
+    try {
+      const history = state.askMessages.filter((item) => item.result).flatMap((item) => [
+        {role: "user", content: item.question},
+        {role: "assistant", content: item.result.answer},
+      ]).slice(-10);
+      const result = await api("/api/ask", { method: "POST", body: JSON.stringify({figure_id: profile.figure_id, period_id: state.currentPeriodId, question, model_id: state.askModelId, mode: state.askMode, history}) });
+      state.askMessages.push({question, result});
+    } catch (error) {
+      const message = error.status === 401 ? "提问功能需要登录私人会话；请先进入“我的镜像”登录，再返回人物馆。" : error.message;
+      state.askMessages.push({question, error: message});
+    } finally {
+      state.asking = false;
+      renderFigure(profile);
+      $("#ask-studio").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  });
+  studio.append(form, el("p", "ask-footnote", "页面只把所选人物与所选时期的材料发送给模型；不同人物、不同私人与历史租户之间不共享记忆。"));
+  return studio;
 }
 
 async function selectFigure(figureId) {
   try {
+    if (state.currentFigure?.figure_id !== figureId) {
+      state.currentPeriodId = null;
+      state.askMessages = [];
+    }
     const profile = await api(`/api/public/figures/${encodeURIComponent(figureId)}`);
     renderFigure(profile);
   } catch (error) {
@@ -172,7 +314,9 @@ async function selectFigure(figureId) {
 
 async function initializePublic() {
   try {
-    const data = await api("/api/public/figures");
+    const [data, models] = await Promise.all([api("/api/public/figures"), api(`/api/public/models?ts=${Date.now()}`)]);
+    state.models = models.models;
+    if (!state.models.some((item) => item.model_id === state.askModelId && item.available)) state.askModelId = state.models.find((item) => item.available)?.model_id || "evidence-synthesis";
     state.figures = data.figures.sort((a, b) => figureOrder.indexOf(a.figure_id) - figureOrder.indexOf(b.figure_id));
     renderFigureList();
     if (state.figures.length) await selectFigure(state.figures[0].figure_id);
@@ -211,16 +355,63 @@ async function showPrivateApp() {
   $("#login-view").hidden = true;
   $("#private-app").hidden = false;
   $("#logout-button").hidden = false;
-  const data = await api("/api/events");
+  const [data, profile] = await Promise.all([api("/api/events"), api("/api/me/profile")]);
   state.events = data.events;
+  state.personalProfile = profile;
+  state.privateView = "profile";
+  state.currentEvent = null;
+  renderPersonalProfile();
   renderPrivateEventList();
-  if (state.events.length) await selectPrivateEvent(state.events[0].episode_id);
+  showPersonalProfile();
+}
+
+function renderPersonalProfile() {
+  const profile = state.personalProfile;
+  if (!profile) return;
+  $("#profile-title").textContent = profile.title;
+  $("#profile-subtitle").textContent = profile.subtitle;
+  $("#profile-confidence").textContent = `${profile.confidence.label} · ${Math.round(profile.confidence.score * 100)}%`;
+  $("#profile-confidence-note").textContent = profile.confidence.note;
+  const stats = $("#profile-stats");
+  stats.replaceChildren();
+  [[profile.coverage.event_count, "决策切片"], [profile.coverage.domain_count, "覆盖领域"], [profile.coverage.evidence_count, "证据锚点"], [profile.coverage.observed_action_count, "已观察行动"]].forEach(([value, label]) => {
+    const card = el("article"); card.append(el("b", "", value), el("span", "", label)); stats.append(card);
+  });
+  const signals = $("#profile-signals");
+  signals.replaceChildren();
+  profile.signals.forEach((signal, index) => {
+    const card = el("article");
+    card.append(el("span", "", String(index + 1).padStart(2, "0")), el("h3", "", signal.label), el("b", "", signal.value), el("p", "", signal.note), el("small", "", signal.support));
+    signals.append(card);
+  });
+  const domains = $("#profile-domains");
+  domains.replaceChildren();
+  profile.domains.forEach((domain) => {
+    const row = el("div"); const copy = el("p"); copy.append(el("span", "", domain.label), el("b", "", `${domain.count} 个`));
+    const meter = el("i"); const fill = el("b"); fill.style.width = `${domain.share * 100}%`; meter.append(fill); row.append(copy, meter); domains.append(row);
+  });
+  const tensions = $("#profile-tensions");
+  tensions.replaceChildren();
+  profile.active_tensions.slice(0, 6).forEach((item) => {
+    const row = el("article"); row.append(el("span", "", item.domain), el("p", "", item.text)); tensions.append(row);
+  });
+  $("#profile-boundary").textContent = profile.data_boundary.note;
+}
+
+function showPersonalProfile() {
+  state.privateView = "profile";
+  state.currentEvent = null;
+  $("#personal-profile").hidden = false;
+  $("#private-event").hidden = true;
+  $("#private-empty").hidden = true;
+  renderPrivateEventList();
 }
 
 function renderPrivateEventList() {
   const list = $("#event-list");
   list.replaceChildren();
   $("#event-count").textContent = state.events.length;
+  $("#profile-nav").classList.toggle("active", state.privateView === "profile");
   state.events.forEach((event, index) => {
     const button = el("button", state.currentEvent?.episode_id === event.episode_id ? "active" : "");
     button.type = "button";
@@ -232,8 +423,11 @@ function renderPrivateEventList() {
 }
 
 async function selectPrivateEvent(episodeId) {
+  state.privateView = "event";
   state.currentEvent = await api(`/api/events/${encodeURIComponent(episodeId)}`);
   renderPrivateEventList();
+  $("#personal-profile").hidden = true;
+  $("#private-empty").hidden = true;
   $("#private-event").hidden = false;
   $("#result-section").hidden = true;
   $("#private-tags").textContent = `${state.currentEvent.domain} · ${state.currentEvent.persona_state.era || "未标记时代"}`;
@@ -295,6 +489,7 @@ async function runPrediction() {
 }
 
 $("#open-private").addEventListener("click", openPrivate);
+$("#profile-nav").addEventListener("click", showPersonalProfile);
 $("#back-public").addEventListener("click", closePrivate);
 $("#login-form").addEventListener("submit", async (event) => {
   event.preventDefault();

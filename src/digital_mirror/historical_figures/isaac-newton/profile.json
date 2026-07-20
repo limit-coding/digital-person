@@ -1,0 +1,70 @@
+{
+  "schema_version": 2,
+  "figure_id": "isaac-newton",
+  "name": "艾萨克·牛顿",
+  "native_name": "ISAAC NEWTON",
+  "life": "1642—1727",
+  "field": "数学 · 自然哲学 · 造币与宗教研究",
+  "tagline": "一个公开的数学家，也是一座长期封闭的私人手稿世界",
+  "accent": "indigo",
+  "archive_scale": "科学论文、通信、炼金术与神学手稿、造币厂行政档案",
+  "status": "三时期研究原型",
+  "method_note": "牛顿的公众科学身份只是手稿世界的一部分。时期化提问必须同时区分已发表的自然哲学、未发表的炼金术和神学研究，以及后期行政实践。",
+  "periods": [
+    {
+      "period_id": "newton-formative-1661-1669",
+      "label": "剑桥形成期",
+      "range": "1661—1669",
+      "headline": "从学生笔记到瘟疫时期的私人突破",
+      "context": "牛顿进入剑桥后建立广泛的阅读与问题笔记。大学因瘟疫受影响期间，他在相对私人环境中推进数学、运动与光学问题，但许多结果尚未公开。",
+      "anchors": ["阅读范围跨越传统课程与新的机械自然哲学。", "数学与光学工作常先存在于私人笔记。", "早期成果的形成时间与正式发表时间并不相同。"],
+      "unknowns": ["这些私人结果何时以及是否公开。", "剑桥职位能否提供长期研究条件。", "同时代学者会如何评价其方法和优先权。"],
+      "evidence": [{"evidence_id": "newton-p1-e1", "date": "1661—1669", "kind": "学生笔记与科学手稿", "proximity": "同期直接材料", "summary": "剑桥数字图书馆的牛顿手稿集合保留数学、光学和阅读笔记的形成轨迹。", "source_title": "Cambridge Digital Library：Newton Papers", "source_url": "https://cudl.lib.cam.ac.uk/collections/newton/1", "confidence": "高"}],
+      "source_slice_ids": []
+    },
+    {
+      "period_id": "newton-principia-1669-1696",
+      "label": "教授与《原理》时期",
+      "range": "1669—1696",
+      "headline": "公开证明、私人研究与学术冲突",
+      "context": "成为卢卡斯数学教授后，牛顿在光学、数学、运动与引力问题上推进研究。哈雷的询问和支持促成《自然哲学的数学原理》，但大量炼金术与神学研究仍未公开。",
+      "anchors": ["学术通信与同行提问能显著改变公开写作节奏。", "《原理》把长期研究压缩成可公开检验的数学论证。", "公开科学、私人炼金术和神学手稿不能混成单一动机。"],
+      "unknowns": ["《原理》的论证能否被欧洲学界接受。", "出版成本和争议会否阻断项目。", "私人研究中哪些内容会在生前公开。"],
+      "evidence": [{"evidence_id": "newton-p2-e1", "date": "1684—1687", "kind": "通信、草稿与首版", "proximity": "同期直接材料", "summary": "哈雷往来、手稿和首版材料显示从特定轨道问题到完整著作的扩张过程。", "source_title": "The Newton Project", "source_url": "https://www.newtonproject.ox.ac.uk/", "confidence": "高"}],
+      "source_slice_ids": ["newton-1684-principia"]
+    },
+    {
+      "period_id": "newton-mint-1696-1727",
+      "label": "造币厂与学术权威时期",
+      "range": "1696—1727",
+      "headline": "从剑桥研究者到国家行政与学会权力中心",
+      "context": "进入皇家造币厂后，牛顿把调查和证据方法用于货币行政与打击伪币；后来担任皇家学会会长，同时卷入优先权与学术权威争议。",
+      "anchors": ["造币厂职责并非纯荣誉职位，而包含持续行政工作。", "科学权威、机构职位和个人争议在晚年相互影响。", "早期手稿在晚年仍被整理或重新解释。"],
+      "unknowns": ["机构权力会如何改变争议处理方式。", "未发表神学和炼金术材料的最终去向。", "后人会怎样重组其公共形象。"],
+      "evidence": [{"evidence_id": "newton-p3-e1", "date": "1696—1727", "kind": "造币厂档案与机构记录", "proximity": "同期行政材料", "summary": "行政与学会记录让晚年牛顿不能只被理解为脱离制度环境的理论科学家。", "source_title": "The Newton Project", "source_url": "https://www.newtonproject.ox.ac.uk/", "confidence": "高"}],
+      "source_slice_ids": []
+    }
+  ],
+  "slices": [
+    {
+      "slice_id": "newton-1684-principia",
+      "date": "1684-08-01",
+      "date_label": "1684年下半年",
+      "title": "哈雷来访后的写作扩张",
+      "question": "面对一个能够回答轨道问题的既有结果，是只提供短篇证明、继续私人研究，还是扩展为一套公开的自然哲学体系？",
+      "context": "哈雷就行星轨道问题访问牛顿。牛顿先承诺提供证明，随后短篇文本逐渐扩张为《自然哲学的数学原理》。",
+      "known_at_cutoff": ["牛顿相信自己已经处理过相关轨道问题。", "哈雷愿意推动并支持成果公开。", "公开完整体系会带来大量写作、证明与争议成本。"],
+      "unknown_at_cutoff": ["写作会扩张到三卷规模。", "皇家学会的财务与出版安排能否顺利。", "胡克等人的优先权主张会怎样影响文本。"],
+      "tensions": ["私人控制 vs 公开检验", "短篇证明 vs 完整体系", "数学确信 vs 优先权争议"],
+      "hypotheses": [
+        {"hypothesis_id": "expand-system", "label": "把证明扩展为完整体系", "probability": 0.54, "basis": "既有长期积累与哈雷的持续推动，使扩张成为可行但高成本的路径。", "evidence_ids": ["newton-e1", "newton-e2"]},
+        {"hypothesis_id": "short-proof", "label": "只交付轨道问题的短篇证明", "probability": 0.31, "basis": "这是最初承诺的直接范围，也更符合降低争议和写作成本的选择。", "evidence_ids": ["newton-e1"]},
+        {"hypothesis_id": "withhold", "label": "继续私人保存而不发表", "probability": 0.15, "basis": "牛顿长期保留私人手稿并回避部分争议，但哈雷的介入降低了公开障碍。", "evidence_ids": ["newton-e2"]}
+      ],
+      "evidence": [
+        {"evidence_id": "newton-e1", "date": "1684", "kind": "通信与写作记录", "proximity": "同期直接材料", "summary": "材料显示问题从轨道证明逐步扩展，哈雷在沟通与出版推动中扮演关键角色。", "source_title": "The Newton Project", "source_url": "https://www.newtonproject.ox.ac.uk/", "confidence": "高"},
+        {"evidence_id": "newton-e2", "date": "1684—1687", "kind": "手稿与出版物", "proximity": "同期直接材料", "summary": "草稿与首版之间的变化支持把《原理》理解为持续扩张、修订和争议管理的结果。", "source_title": "Cambridge Digital Library：Newton Papers", "source_url": "https://cudl.lib.cam.ac.uk/collections/newton/1", "confidence": "高"}
+      ]
+    }
+  ]
+}

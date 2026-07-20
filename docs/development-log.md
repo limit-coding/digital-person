@@ -57,3 +57,13 @@
 - 开发日志 Issue：[#1](https://github.com/limit-coding/digital-person/issues/1)。
 - 草稿 Pull Request：[#2](https://github.com/limit-coding/digital-person/pull/2)。
 - 服务器 SSH 连接仍然超时，线上部署继续保留为合并前验收项。
+
+## 2026-07-20 · 时期镜像与开放提问
+
+- 私人镜像从事件列表扩展为总体画像：6 个现有决策切片、5 个领域、证据覆盖、判断—行动一致度、权衡强度、选项广度和临场改道。
+- 新增贝多芬与牛顿，人物馆由 11 位增至 13 位；两人各自建立 3 个时期，其他人物可逐步从单切片迁移到多时期结构。
+- 新增 `POST /api/ask`：按人物、时期、问题、模式与模型路由开放提问，支持有限连续对话。
+- 接入 Google Gemini、DeepSeek、OpenAI、OpenAI 兼容接口与本地 Ollama 的统一模型目录；真实密钥仅从环境变量读取。
+- 模型声称的“史料支持”不直接可信。服务端以时期锚点和证据白名单重新分层，额外背景自动降为创造性推演。
+- 本地实际验收：贝多芬三时期切换、私人画像登录态、DeepSeek 与 Google Gemini 的反事实提问链均运行成功。
+- 自动化测试增至 63 项，Python 编译与前端 JavaScript 语法检查通过。
