@@ -1,3 +1,4 @@
+import os
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -12,17 +13,17 @@ from digital_mirror.webapp import Settings, create_app
 class WebAppTests(unittest.TestCase):
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory()
-        empty_episodes = Path(self.temporary.name) / "episodes"
-        empty_episodes.mkdir()
-        settings = Settings(
-            episode_root=empty_episodes,
+        self.episode_root = Path(self.temporary.name) / "episodes"
+        self.episode_root.mkdir()
+        self.settings = Settings(
+            episode_root=self.episode_root,
             historical_root=catalog_root(),
             schema_path=Path("schemas/replay_prediction.schema.json"),
             access_password="test-password",
             session_secret="test-session-secret",
             cookie_secure=True,
         )
-        self.client = TestClient(create_app(settings=settings), base_url="https://testserver")
+        self.client = TestClient(create_app(settings=self.settings), base_url="https://testserver")
 
     def tearDown(self):
         self.client.close()
@@ -111,6 +112,68 @@ class WebAppTests(unittest.TestCase):
             )
         self.assertEqual(denied.status_code, 422)
         self.assertIn("明确授权", denied.json()["detail"])
+
+    def test_event_replay_selects_model_and_requires_cloud_consent(self):
+        source = Path(
+            "data/episodes/provisional/relationship_2026_03_11_send_long_message.json"
+        )
+        (self.episode_root / source.name).write_text(
+            source.read_text(encoding="utf-8"), encoding="utf-8"
+        )
+
+        def fake_replay_runner(case, _schema, model_id, _thinking, allow_cloud):
+            self.assertEqual(model_id, "gemini")
+            self.assertTrue(allow_cloud)
+            return (
+                {
+                    "episode_id": case["episode_id"],
+                    "predicted_judgement": "send",
+                    "predicted_action": "hold",
+                    "option_probabilities": {
+                        "send": 0.45,
+                        "hold": 0.5,
+                        "abandon": 0.05,
+                    },
+                    "considered_option_ids": ["send", "hold"],
+                    "tensions": ["表达 vs 风险"],
+                    "unknowns": ["对方反应"],
+                    "deliberation_intensity": 0.7,
+                    "confidence": 0.6,
+                    "evidence_ids": [case["evidence"][0]["evidence_id"]],
+                },
+                0,
+            )
+
+        with patch.dict(os.environ, {"GEMINI_API_KEY": "synthetic-key"}, clear=False):
+            client = TestClient(
+                create_app(
+                    settings=self.settings,
+                    replay_prediction_runner=fake_replay_runner,
+                ),
+                base_url="https://testserver",
+            )
+            client.post("/api/login", json={"password": "test-password"})
+            payload = {
+                "episode_id": "relationship_2026_03_11_send_long_message",
+                "thinking": "enabled",
+                "model_id": "gemini",
+                "allow_cloud": False,
+            }
+            denied = client.post("/api/predict", json=payload)
+            self.assertEqual(denied.status_code, 422)
+            self.assertIn("明确授权", denied.json()["detail"])
+
+            allowed = client.post(
+                "/api/predict", json=payload | {"allow_cloud": True}
+            )
+            client.close()
+
+        self.assertEqual(allowed.status_code, 200)
+        body = allowed.json()
+        self.assertEqual(body["model"]["model_id"], "gemini")
+        self.assertEqual(body["prediction"]["predicted_action"], "hold")
+        self.assertEqual(body["actual"]["action"], "send")
+        self.assertNotIn("source_relative_path", str(body))
 
     def test_unknown_or_malformed_figure_returns_not_found(self):
         self.assertEqual(self.client.get("/api/public/figures/nope").status_code, 404)

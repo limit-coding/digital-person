@@ -17,6 +17,7 @@
 - 时期化提问：选择人物的特定时期后提出开放问题，同时比较多个模型的核心判断、史料支持、创造性推演与未知。
 - 多模型路由：支持 Google Gemini、DeepSeek、OpenAI、OpenAI 兼容接口和本地 Ollama；密钥只从环境变量读取。
 - 私人总体画像：聚合跨事件的领域覆盖、判断—行动一致度、权衡强度与临场改道，并可向多个模型直接提问。
+- 多模型事件回放：同一脱敏历史截面可由多个模型独立预测，页面直接标出判断/行动的一致或分歧，再与真实记录对照。
 
 架构和评测原则分别见 [docs/architecture.md](docs/architecture.md) 与 [docs/evaluation.md](docs/evaluation.md)。
 
@@ -61,7 +62,7 @@ GEMINI_API_KEY=replace-with-new-key
 DIGITAL_MIRROR_GEMINI_MODEL=gemini-2.5-flash
 ```
 
-不要把真实密钥提交到 Git；`.env` 已被忽略。历史时期提问 API 为 `POST /api/ask`，私人聚合画像提问 API 为 `POST /api/me/ask`，两者都需要登录。私人接口在调用云模型前还要求显式 `allow_cloud` 授权。
+不要把真实密钥提交到 Git；`.env` 已被忽略。历史时期提问 API 为 `POST /api/ask`，私人聚合画像提问 API 为 `POST /api/me/ask`，私人事件回放 API 为 `POST /api/predict`，三者都需要登录。私人接口在调用云模型前还要求显式 `allow_cloud` 授权。
 
 审计本地数据源，只生成不含正文的清单和摘要：
 

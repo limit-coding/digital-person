@@ -37,6 +37,8 @@ from .model_router import (
     ModelUnavailableError,
     answer_historical_question,
     answer_personal_question,
+    answer_replay_prediction,
+    model_spec,
     model_specs,
 )
 from .personal_profile import build_personal_snapshot
@@ -48,6 +50,16 @@ EPISODE_ID_RE = re.compile(r"^[A-Za-z0-9_.-]{1,160}$")
 SESSION_COOKIE = "digital_mirror_session"
 PredictionRunner = Callable[
     [dict[str, Any], dict[str, Any], Literal["enabled", "disabled"]],
+    tuple[dict[str, Any], int],
+]
+ReplayPredictionRunner = Callable[
+    [
+        dict[str, Any],
+        dict[str, Any],
+        str,
+        Literal["enabled", "disabled"],
+        bool,
+    ],
     tuple[dict[str, Any], int],
 ]
 HistoricalAnswerRunner = Callable[
@@ -321,6 +333,8 @@ class PredictionRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     episode_id: str = Field(min_length=1, max_length=160, pattern=EPISODE_ID_RE.pattern)
     thinking: Literal["enabled", "disabled"] = "enabled"
+    model_id: str = Field(default="deepseek", min_length=1, max_length=80)
+    allow_cloud: bool = False
 
 
 class PredictionView(BaseModel):
@@ -353,7 +367,7 @@ class ScoreView(BaseModel):
 
 
 class PredictionResponse(BaseModel):
-    model: str
+    model: ModelView
     thinking: Literal["enabled", "disabled"]
     generated_at: str
     prediction: PredictionView
@@ -479,11 +493,12 @@ def default_prediction_runner(
 def create_app(
     settings: Settings | None = None,
     prediction_runner: PredictionRunner | None = None,
+    replay_prediction_runner: ReplayPredictionRunner | None = None,
     historical_answer_runner: HistoricalAnswerRunner | None = None,
     static_root: Path | None = None,
 ) -> FastAPI:
     settings = settings or Settings.from_environment()
-    prediction_runner = prediction_runner or default_prediction_runner
+    replay_prediction_runner = replay_prediction_runner or answer_replay_prediction
     historical_answer_runner = historical_answer_runner or answer_historical_question
     static_root = static_root or Path(__file__).with_name("web_static")
     signer = SessionSigner(settings.session_secret, settings.session_ttl_seconds)
@@ -494,7 +509,7 @@ def create_app(
     question_limiter = SlidingWindowLimiter(
         limit=settings.question_limit_per_hour, window_seconds=60 * 60
     )
-    prediction_lock = threading.Lock()
+    prediction_slots = threading.BoundedSemaphore(value=4)
 
     app = FastAPI(
         title="Mirror Atlas",
@@ -702,7 +717,7 @@ def create_app(
             raise HTTPException(status_code=404, detail="人物时期不存在")
         if sum(len(item.content) for item in payload.history) > 6000:
             raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
                 detail="对话历史过长",
             )
         if not question_limiter.allow(client_key(request)):
@@ -721,7 +736,7 @@ def create_app(
             )
         except ModelUnavailableError as exc:
             raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
                 detail="所选模型当前不可用",
             ) from exc
         except Exception as exc:
@@ -761,28 +776,57 @@ def create_app(
         safety_errors = cloud_safety_errors(case)
         if safety_errors:
             raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
                 detail="该事件没有通过云端脱敏检查",
             )
-        if not os.environ.get("DEEPSEEK_API_KEY"):
+        selected_model = model_spec(payload.model_id)
+        if (
+            not selected_model
+            or not selected_model.available
+            or payload.model_id == "evidence-synthesis"
+        ):
             raise HTTPException(
-                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                detail="模型服务尚未配置",
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+                detail="所选模型当前不可用于事件回放",
+            )
+        if not selected_model.local and not payload.allow_cloud:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+                detail="发送脱敏历史截面到云模型前需要明确授权",
             )
         if not prediction_limiter.allow(client_key(request)):
             raise HTTPException(
                 status_code=status.HTTP_429_TOO_MANY_REQUESTS,
                 detail="本小时预测次数已达上限",
             )
-        if not prediction_lock.acquire(blocking=False):
+        if not prediction_slots.acquire(blocking=False):
             raise HTTPException(
                 status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-                detail="已有预测正在运行，请稍后再试",
+                detail="并行预测数量已达上限，请稍后再试",
             )
         try:
             schema = load_json(settings.schema_path)
-            prediction, _ = prediction_runner(case, schema, payload.thinking)
+            if prediction_runner is not None and payload.model_id == "deepseek":
+                prediction, _ = prediction_runner(case, schema, payload.thinking)
+            else:
+                prediction, _ = replay_prediction_runner(
+                    case,
+                    schema,
+                    payload.model_id,
+                    payload.thinking,
+                    payload.allow_cloud,
+                )
             score = score_prediction(episode, prediction, case)
+        except ModelUnavailableError as exc:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+                detail="所选模型当前不可用于事件回放",
+            ) from exc
+        except CloudConsentRequiredError as exc:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+                detail="发送脱敏历史截面到云模型前需要明确授权",
+            ) from exc
         except Exception as exc:  # Provider details must not reach the browser.
             LOGGER.error("Prediction failed: %s", type(exc).__name__)
             raise HTTPException(
@@ -790,12 +834,12 @@ def create_app(
                 detail="模型调用失败，请稍后重试",
             ) from exc
         finally:
-            prediction_lock.release()
+            prediction_slots.release()
 
         labels = episode["labels"]
         deliberation = labels["contemporaneous_deliberation"]
         return PredictionResponse(
-            model="deepseek-v4-pro",
+            model=ModelView.model_validate(selected_model.public()),
             thinking=payload.thinking,
             generated_at=datetime.now(timezone.utc).isoformat(),
             prediction=PredictionView.model_validate(prediction),

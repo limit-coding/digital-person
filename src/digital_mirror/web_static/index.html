@@ -10,8 +10,8 @@
     <meta property="og:description" content="不是替历史人物读心，而是让每一种推断都能被追问。" />
     <meta property="og:image" content="https://mirror.learnpath.tech/assets/og.png" />
     <title>Mirror Atlas · 历史人物数字切片</title>
-    <link rel="stylesheet" href="/assets/styles.css?v=20260720c" />
-    <script src="/assets/app.js?v=20260720c" defer></script>
+    <link rel="stylesheet" href="/assets/styles.css?v=20260720d" />
+    <script src="/assets/app.js?v=20260720d" defer></script>
   </head>
   <body>
     <div class="paper-grain" aria-hidden="true"></div>
@@ -163,16 +163,21 @@
             <div class="private-event-head"><p id="private-tags"></p><h1 id="event-question"></h1><span id="event-cutoff"></span></div>
             <section><h3>当时已知</h3><div class="private-evidence" id="evidence-list"></div></section>
             <section><h3>可能选择</h3><div class="private-options" id="option-grid"></div></section>
+            <section class="replay-model-config">
+              <div><span>参与回放的模型 · 可多选</span><div class="ask-model-choices" id="replay-model-choices"></div></div>
+              <label class="cloud-consent"><input id="replay-cloud-consent" type="checkbox" /><span>允许把当前脱敏历史截面发送给所选云模型；不会发送事件结果、聊天原文或源路径</span></label>
+            </section>
             <div class="private-run">
               <div><b>历史截面已锁定</b><span>模型看不到事件结果</span></div>
               <div class="mode-control"><button class="mode active" data-thinking="enabled" type="button">思考模式</button><button class="mode" data-thinking="disabled" type="button">直觉模式</button></div>
-              <button id="run-button" type="button">开始回放 ↗</button>
+              <button id="run-button" type="button">让多个模型回放 ↗</button>
               <p id="run-message" role="status"></p>
             </div>
             <section class="private-result" id="result-section" hidden>
-              <h2>镜像预测与真实记录</h2>
-              <div class="result-pair"><article><span>模型判断</span><b id="model-judgement"></b><small id="model-action"></small></article><article><span>真实判断</span><b id="actual-judgement"></b><small id="actual-action"></small></article></div>
-              <div id="probability-list" class="private-probabilities"></div>
+              <div class="replay-result-head"><div><span>MULTI-MODEL REPLAY</span><h2>各模型如何判断</h2></div><div id="replay-agreement"></div></div>
+              <p class="replay-difference" id="replay-difference"></p>
+              <div class="replay-comparison" id="replay-comparison"></div>
+              <article class="actual-record"><span>真实记录 · 仅在模型回答后揭示</span><b id="actual-judgement"></b><small id="actual-action"></small></article>
             </section>
           </article>
         </main>

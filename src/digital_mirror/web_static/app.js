@@ -18,6 +18,9 @@ const state = {
   personalAskMessages: [],
   personalAsking: false,
   personalCloudConsent: false,
+  replayModelIds: [],
+  replayCloudConsent: false,
+  replayResults: [],
 };
 
 const $ = (selector) => document.querySelector(selector);
@@ -375,6 +378,7 @@ async function initializePublic() {
     const defaultModelIds = (externalModels.length ? externalModels : state.models.filter((item) => item.available)).slice(0, 4).map((item) => item.model_id);
     state.askModelIds = [...defaultModelIds];
     state.personalAskModelIds = [...defaultModelIds];
+    state.replayModelIds = [...defaultModelIds];
     state.figures = data.figures.sort((a, b) => figureOrder.indexOf(a.figure_id) - figureOrder.indexOf(b.figure_id));
     renderFigureList();
     if (state.figures.length) await selectFigure(state.figures[0].figure_id);
@@ -550,6 +554,7 @@ function renderPrivateEventList() {
 async function selectPrivateEvent(episodeId) {
   state.privateView = "event";
   state.currentEvent = await api(`/api/events/${encodeURIComponent(episodeId)}`);
+  state.replayResults = [];
   renderPrivateEventList();
   $("#personal-profile").hidden = true;
   $("#private-empty").hidden = true;
@@ -572,17 +577,59 @@ async function selectPrivateEvent(episodeId) {
     card.append(el("span", "", String.fromCharCode(65 + index)), el("p", "", item.description));
     options.append(card);
   });
+  renderReplayControls();
 }
 
-function renderPrediction(result) {
-  $("#result-section").hidden = false;
-  $("#model-judgement").textContent = optionLabel(result.prediction.predicted_judgement);
-  $("#model-action").textContent = `预测行动：${optionLabel(result.prediction.predicted_action)}`;
-  $("#actual-judgement").textContent = optionLabel(result.actual.judgement);
-  $("#actual-action").textContent = `实际行动：${optionLabel(result.actual.action)}`;
-  const list = $("#probability-list");
-  list.replaceChildren();
-  Object.entries(result.prediction.option_probabilities).sort((a, b) => b[1] - a[1]).forEach(([id, value]) => {
+function replayModels() {
+  return state.models.filter((model) => model.available && model.model_id !== "evidence-synthesis");
+}
+
+function renderReplayControls() {
+  const choices = $("#replay-model-choices");
+  choices.replaceChildren();
+  replayModels().forEach((model) => {
+    const selected = state.replayModelIds.includes(model.model_id);
+    const button = el("button", selected ? "active" : "", model.label);
+    button.type = "button";
+    button.setAttribute("aria-pressed", String(selected));
+    button.addEventListener("click", () => {
+      if (selected && state.replayModelIds.length > 1) state.replayModelIds = state.replayModelIds.filter((id) => id !== model.model_id);
+      else if (!selected && state.replayModelIds.length < 4) state.replayModelIds = [...state.replayModelIds, model.model_id];
+      renderReplayControls();
+    });
+    choices.append(button);
+  });
+  const consent = $("#replay-cloud-consent");
+  consent.checked = state.replayCloudConsent;
+  const selectedModels = replayModels().filter((model) => state.replayModelIds.includes(model.model_id));
+  const needsConsent = selectedModels.some((model) => !model.local);
+  const button = $("#run-button");
+  button.textContent = state.running ? `正在等待 ${selectedModels.length} 个模型…` : `让 ${selectedModels.length} 个模型回放 ↗`;
+  button.disabled = state.running || !selectedModels.length || (needsConsent && !state.replayCloudConsent);
+  if (needsConsent && !state.replayCloudConsent) {
+    $("#run-message").textContent = "勾选授权后，才会发送脱敏历史截面；事件结果始终留在服务端。";
+  } else if (!state.running && !state.replayResults.length) {
+    $("#run-message").textContent = "";
+  }
+}
+
+function replayResultCard(entry, actual) {
+  const card = el("article", "replay-model-card");
+  card.append(el("span", "replay-model-name", entry.modelLabel));
+  if (entry.error) {
+    card.append(el("b", "replay-error", "本次调用失败"), el("small", "", entry.error));
+    return card;
+  }
+  const prediction = entry.result.prediction;
+  const judgement = optionLabel(prediction.predicted_judgement);
+  const action = optionLabel(prediction.predicted_action);
+  const actionHit = prediction.predicted_action === actual.action;
+  const verdict = el("div", "replay-verdict");
+  verdict.append(el("span", "", "当时会判断"), el("b", "", judgement), el("span", "", "最终会行动"), el("strong", "", action));
+  const hit = el("i", actionHit ? "hit" : "miss", actionHit ? "行动命中真实记录" : "与真实行动不同");
+  card.append(verdict, hit);
+  const probabilities = el("div", "private-probabilities compact");
+  Object.entries(prediction.option_probabilities).sort((a, b) => b[1] - a[1]).forEach(([id, value]) => {
     const row = el("div");
     const copy = el("p");
     copy.append(el("span", "", optionLabel(id)), el("b", "", `${Math.round(value * 100)}%`));
@@ -591,25 +638,62 @@ function renderPrediction(result) {
     fill.style.width = `${value * 100}%`;
     meter.append(fill);
     row.append(copy, meter);
-    list.append(row);
+    probabilities.append(row);
   });
+  card.append(probabilities);
+  return card;
+}
+
+function renderPrediction(results) {
+  $("#result-section").hidden = false;
+  const successful = results.filter((entry) => entry.result);
+  const actual = successful[0]?.result.actual || {judgement: null, action: null};
+  const judgements = new Set(successful.map((entry) => entry.result.prediction.predicted_judgement));
+  const actions = new Set(successful.map((entry) => entry.result.prediction.predicted_action));
+  const agreement = $("#replay-agreement");
+  agreement.replaceChildren();
+  if (successful.length > 1) {
+    agreement.append(
+      el("span", judgements.size === 1 ? "agree" : "disagree", judgements.size === 1 ? "判断一致" : "判断有分歧"),
+      el("span", actions.size === 1 ? "agree" : "disagree", actions.size === 1 ? "行动一致" : "行动有分歧"),
+    );
+  } else {
+    agreement.append(el("span", "disagree", "仅一个模型成功"));
+  }
+  $("#replay-difference").textContent = successful.map((entry) => {
+    const prediction = entry.result.prediction;
+    return `${entry.modelLabel}：判断“${optionLabel(prediction.predicted_judgement)}”，行动“${optionLabel(prediction.predicted_action)}”`;
+  }).join("；");
+  const comparison = $("#replay-comparison");
+  comparison.replaceChildren();
+  results.forEach((entry) => comparison.append(replayResultCard(entry, actual)));
+  $("#actual-judgement").textContent = optionLabel(actual.judgement);
+  $("#actual-action").textContent = `实际行动：${optionLabel(actual.action)}`;
   $("#result-section").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 async function runPrediction() {
   if (!state.currentEvent || state.running) return;
+  const selectedModels = replayModels().filter((model) => state.replayModelIds.includes(model.model_id));
+  if (!selectedModels.length) return;
   state.running = true;
-  $("#run-button").disabled = true;
-  $("#run-message").textContent = "正在严格按历史截面重建…";
+  renderReplayControls();
+  $("#run-message").textContent = `正在让 ${selectedModels.length} 个模型分别重建同一历史截面…`;
   try {
-    const result = await api("/api/predict", { method: "POST", body: JSON.stringify({ episode_id: state.currentEvent.episode_id, thinking: state.thinking }) });
-    renderPrediction(result);
-    $("#run-message").textContent = "完成。本次输入未包含截止点之后的信息。";
-  } catch (error) {
-    $("#run-message").textContent = error.message;
+    const results = await Promise.all(selectedModels.map(async (model) => {
+      try {
+        const result = await api("/api/predict", {method: "POST", body: JSON.stringify({episode_id: state.currentEvent.episode_id, thinking: state.thinking, model_id: model.model_id, allow_cloud: state.replayCloudConsent})});
+        return {modelLabel: model.label, result};
+      } catch (error) {
+        return {modelLabel: model.label, error: error.message};
+      }
+    }));
+    state.replayResults = results;
+    renderPrediction(results);
+    $("#run-message").textContent = "完成。上方先显示结论分歧，再展示各自概率；所有模型都未看到截止点后的真实结果。";
   } finally {
     state.running = false;
-    $("#run-button").disabled = false;
+    renderReplayControls();
   }
 }
 
@@ -618,6 +702,10 @@ $("#profile-nav").addEventListener("click", showPersonalProfile);
 $("#personal-cloud-consent").addEventListener("change", (event) => {
   state.personalCloudConsent = event.target.checked;
   renderPersonalAskStudio();
+});
+$("#replay-cloud-consent").addEventListener("change", (event) => {
+  state.replayCloudConsent = event.target.checked;
+  renderReplayControls();
 });
 $("#personal-ask-form").addEventListener("submit", runPersonalQuestion);
 $("#back-public").addEventListener("click", closePrivate);

@@ -326,6 +326,9 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .private-options span { color: #b7ff65; font-size: 9px; }
 .private-options p { margin: 17px 0 0; color: #c5c8ce; font-size: 11px; }
 .private-run { margin-top: 45px; display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 18px; padding: 22px; border: 1px solid rgba(183,255,101,.18); border-radius: 14px; background: rgba(183,255,101,.04); }
+.replay-model-config { margin-top: 36px; padding: 18px 20px; border: 1px solid rgba(255,255,255,.09); border-radius: 12px; background: rgba(255,255,255,.025); }
+.replay-model-config > div > span { display: block; margin-bottom: 10px; color: #777d87; font-size: 8px; letter-spacing: .13em; text-transform: uppercase; }
+.replay-model-config .cloud-consent { margin-bottom: 0; }
 .private-run > div:first-child b, .private-run > div:first-child span { display: block; }
 .private-run > div:first-child b { font-size: 12px; }
 .private-run > div:first-child span { margin-top: 5px; color: #747a85; font-size: 9px; }
@@ -337,6 +340,30 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .private-run > p { grid-column: 1 / -1; margin: -4px 0 0; color: #7d838e; font-size: 9px; }
 .private-result { padding-top: 20px; border-top: 1px solid rgba(255,255,255,.1); }
 .private-result h2 { font-family: var(--serif); font-size: 27px; }
+.replay-result-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; }
+.replay-result-head > div:first-child > span { color: #777d87; font-size: 8px; letter-spacing: .15em; }
+.replay-result-head h2 { margin: 6px 0 0; }
+#replay-agreement { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 5px; }
+#replay-agreement span { padding: 6px 8px; border: 1px solid; border-radius: 999px; font-size: 8px; }
+#replay-agreement .agree { border-color: rgba(183,255,101,.38); color: #b7ff65; background: rgba(183,255,101,.07); }
+#replay-agreement .disagree { border-color: rgba(255,182,93,.42); color: #ffb65d; background: rgba(255,182,93,.08); }
+.replay-difference { margin: 14px 0 18px; padding: 12px 14px; border-left: 2px solid #9b85ff; color: #c7c2d6; background: rgba(155,133,255,.07); font-size: 10px; line-height: 1.7; }
+.replay-comparison { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); gap: 9px; }
+.replay-model-card { padding: 19px; border: 1px solid rgba(255,255,255,.1); border-radius: 12px; background: #13171e; }
+.replay-model-name { display: block; margin-bottom: 17px; color: #9b85ff; font-size: 9px; letter-spacing: .08em; }
+.replay-verdict span, .replay-verdict b, .replay-verdict strong { display: block; }
+.replay-verdict span { margin: 11px 0 5px; color: #777d87; font-size: 8px; }
+.replay-verdict b, .replay-verdict strong { font-family: var(--serif); font-size: 16px; line-height: 1.4; }
+.replay-verdict strong { color: #f1f4f8; }
+.replay-model-card > i { display: inline-block; margin-top: 14px; padding: 5px 7px; border-radius: 5px; font-size: 8px; font-style: normal; }
+.replay-model-card > i.hit { color: #b7ff65; background: rgba(183,255,101,.08); }
+.replay-model-card > i.miss { color: #ffb65d; background: rgba(255,182,93,.08); }
+.replay-error { display: block; margin-bottom: 8px; color: #ffb65d; }
+.actual-record { margin-top: 10px; padding: 18px 19px; border: 1px solid rgba(183,255,101,.24); border-radius: 12px; background: rgba(183,255,101,.045); }
+.actual-record span, .actual-record b, .actual-record small { display: block; }
+.actual-record span { color: #7f8590; font-size: 8px; }
+.actual-record b { margin-top: 11px; font-family: var(--serif); font-size: 17px; }
+.actual-record small { margin-top: 6px; color: #b7ff65; font-size: 9px; }
 .result-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
 .result-pair article { min-height: 130px; padding: 19px; border: 1px solid rgba(255,255,255,.1); border-radius: 12px; }
 .result-pair span, .result-pair b, .result-pair small { display: block; }
@@ -344,6 +371,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .result-pair b { margin-top: 20px; font-family: var(--serif); font-size: 17px; }
 .result-pair small { margin-top: 8px; color: #9b85ff; font-size: 9px; }
 .private-probabilities { margin-top: 20px; }
+.private-probabilities.compact { margin-top: 18px; }
 .private-probabilities > div { margin: 12px 0; }
 .private-probabilities p { display: flex; justify-content: space-between; margin: 0 0 6px; color: #aeb2bb; font-size: 9px; }
 .private-probabilities i { display: block; height: 3px; background: rgba(255,255,255,.08); }

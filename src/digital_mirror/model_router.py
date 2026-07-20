@@ -9,8 +9,12 @@ from typing import Any, Callable, Literal
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
+from .local_baseline import build_prompt
+from .replay import validate_prediction
+
 
 AnswerMode = Literal["grounded", "counterfactual"]
+ReplayThinking = Literal["enabled", "disabled"]
 
 
 class ModelUnavailableError(ValueError):
@@ -479,3 +483,43 @@ def answer_personal_question(
         ][:5],
         "boundary_note": "这是基于少量私人决策聚合的工作模型，不是人格诊断，也不会替你作最终决定。",
     }
+
+
+def answer_replay_prediction(
+    case: dict[str, Any],
+    schema: dict[str, Any],
+    model_id: str,
+    thinking: ReplayThinking,
+    allow_cloud: bool,
+    request: Callable[[str, dict[str, Any], str | None, int], dict[str, Any]] = _json_request,
+) -> tuple[dict[str, Any], int]:
+    """Run one leak-free replay case through a selected configured model."""
+
+    spec = model_spec(model_id)
+    if not spec or not spec.available or model_id == "evidence-synthesis":
+        raise ModelUnavailableError("model is not available for replay prediction")
+    if not spec.local and not allow_cloud:
+        raise CloudConsentRequiredError("cloud consent is required")
+
+    format_errors: list[str] | None = None
+    for retry in range(3):
+        reasoning_note = (
+            "请在内部充分比较证据、竞争选项与判断/行动之间可能出现的差距；不要输出思维链。"
+            if thinking == "enabled"
+            else "请按第一反应作出判断，但仍必须遵守证据边界与输出格式。"
+        )
+        prompt = (
+            build_prompt(case, format_errors)
+            + "\n\n"
+            + reasoning_note
+            + "\n输出必须符合以下 JSON Schema：\n"
+            + json.dumps(schema, ensure_ascii=False, sort_keys=True)
+        )
+        prediction = _run_external_model(spec, prompt, "grounded", request)
+        format_errors = validate_prediction(case, prediction)
+        if not format_errors:
+            return prediction, retry
+    raise ValueError(
+        "model did not produce a valid replay prediction: "
+        + "; ".join(format_errors or ["unknown formatting failure"])
+    )
