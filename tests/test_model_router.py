@@ -1,17 +1,45 @@
 import json
 import os
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from digital_mirror.historical_catalog import load_catalog, period_from_profile
 from digital_mirror.model_router import (
     CloudConsentRequiredError,
+    _json_request,
     answer_historical_question,
     answer_replay_prediction,
 )
 
 
 class ModelRouterTests(unittest.TestCase):
+    def test_gemini_request_can_use_a_provider_specific_proxy(self):
+        response = MagicMock()
+        response.__enter__.return_value.read.return_value = b'{"ok": true}'
+        with (
+            patch.dict(
+                os.environ,
+                {"DIGITAL_MIRROR_GEMINI_HTTPS_PROXY": "http://127.0.0.1:18181"},
+                clear=False,
+            ),
+            patch("digital_mirror.model_router.build_opener") as build_opener,
+            patch("digital_mirror.model_router.urlopen") as direct_urlopen,
+        ):
+            build_opener.return_value.open.return_value = response
+            result = _json_request(
+                "https://generativelanguage.googleapis.com/v1beta/models/test",
+                {"contents": []},
+                "synthetic-key",
+                5,
+            )
+
+        self.assertEqual(result, {"ok": True})
+        self.assertEqual(
+            build_opener.call_args.args[0].proxies["https"],
+            "http://127.0.0.1:18181",
+        )
+        direct_urlopen.assert_not_called()
+
     def test_replay_prediction_requires_consent_and_preserves_option_contract(self):
         case = {
             "schema_version": 1,

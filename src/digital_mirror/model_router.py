@@ -7,7 +7,7 @@ import os
 from dataclasses import dataclass
 from typing import Any, Callable, Literal
 from urllib.error import HTTPError, URLError
-from urllib.request import Request, urlopen
+from urllib.request import ProxyHandler, Request, build_opener, urlopen
 
 from .local_baseline import build_prompt
 from .replay import validate_prediction
@@ -183,7 +183,17 @@ def _json_request(
         method="POST",
     )
     try:
-        with urlopen(request, timeout=timeout_seconds) as response:
+        gemini_proxy = (
+            os.environ.get("DIGITAL_MIRROR_GEMINI_HTTPS_PROXY")
+            if "generativelanguage.googleapis.com" in url
+            else None
+        )
+        if gemini_proxy:
+            opener = build_opener(ProxyHandler({"https": gemini_proxy}))
+            response_context = opener.open(request, timeout=timeout_seconds)
+        else:
+            response_context = urlopen(request, timeout=timeout_seconds)
+        with response_context as response:
             return json.loads(response.read().decode("utf-8"))
     except (HTTPError, URLError, TimeoutError, json.JSONDecodeError) as exc:
         raise RuntimeError("model request failed") from exc
