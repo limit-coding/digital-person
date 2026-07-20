@@ -62,7 +62,7 @@ GEMINI_API_KEY=replace-with-new-key
 DIGITAL_MIRROR_GEMINI_MODEL=gemini-2.5-flash
 ```
 
-不要把真实密钥提交到 Git；`.env` 已被忽略。历史时期提问 API 为 `POST /api/ask`，私人聚合画像提问 API 为 `POST /api/me/ask`，私人事件回放 API 为 `POST /api/predict`，三者都需要登录。私人接口在调用云模型前还要求显式 `allow_cloud` 授权。
+不要把真实密钥提交到 Git；`.env` 已被忽略。历史时期提问 API `POST /api/ask` 属于公开人物馆，无需登录但受调用频率限制。私人聚合画像提问 `POST /api/me/ask`、私人事件读取与回放 `POST /api/events*`、`POST /api/predict` 始终需要登录；私人接口在调用云模型前还要求显式 `allow_cloud` 授权。
 
 审计本地数据源，只生成不含正文的清单和摘要：
 

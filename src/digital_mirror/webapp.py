@@ -703,7 +703,6 @@ def create_app(
     @app.post(
         "/api/ask",
         response_model=HistoricalAnswerResponse,
-        dependencies=[Depends(require_session)],
     )
     def ask_historical_period(
         payload: HistoricalQuestionRequest,

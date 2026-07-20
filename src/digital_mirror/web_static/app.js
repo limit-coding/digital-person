@@ -341,8 +341,7 @@ function renderQuestionStudio(profile) {
           const result = await api("/api/ask", { method: "POST", body: JSON.stringify({figure_id: profile.figure_id, period_id: state.currentPeriodId, question, model_id: model.model_id, mode: state.askMode, history}) });
           return {modelLabel: model.label, result};
         } catch (error) {
-          const message = error.status === 401 ? "需要先登录私人会话" : error.message;
-          return {modelLabel: model.label, error: message};
+          return {modelLabel: model.label, error: error.message};
         }
       }));
       state.askMessages.push({question, results});

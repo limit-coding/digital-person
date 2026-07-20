@@ -56,7 +56,7 @@ class WebAppTests(unittest.TestCase):
         self.assertEqual(profile.json()["mirror_id"], "personal")
         self.assertEqual(profile.json()["coverage"]["event_count"], 0)
 
-    def test_period_question_is_authenticated_and_evidence_bounded(self):
+    def test_period_question_is_public_and_evidence_bounded(self):
         models = self.client.get("/api/public/models")
         self.assertEqual(models.status_code, 200)
         self.assertTrue(
@@ -71,8 +71,6 @@ class WebAppTests(unittest.TestCase):
             "mode": "counterfactual",
             "history": [],
         }
-        self.assertEqual(self.client.post("/api/ask", json=payload).status_code, 401)
-        self.client.post("/api/login", json={"password": "test-password"})
         answer = self.client.post("/api/ask", json=payload)
         self.assertEqual(answer.status_code, 200)
         body = answer.json()
@@ -85,6 +83,12 @@ class WebAppTests(unittest.TestCase):
         )
         self.assertEqual(body["evidence_ids"], ["beethoven-p2-e1"])
         self.assertIn("不代表人物真实说过", body["boundary_note"])
+
+        private_prediction = self.client.post(
+            "/api/predict",
+            json={"episode_id": "private_event", "thinking": "enabled"},
+        )
+        self.assertEqual(private_prediction.status_code, 401)
 
     def test_personal_mirror_can_be_asked_without_exposing_raw_data(self):
         payload = {
