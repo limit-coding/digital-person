@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "figure_id": "albert-einstein",
+  "name": "阿尔伯特·爱因斯坦",
+  "native_name": "ALBERT EINSTEIN",
+  "life": "1879—1955",
+  "field": "物理学 · 公共知识分子",
+  "tagline": "和平主义者是否应该警告政府制造可怕武器",
+  "accent": "cyan",
+  "archive_scale": "约90,000条手稿与通信记录、数千件全文",
+  "status": "研究原型",
+  "method_note": "这张切片会特别纠正“爱因斯坦单独发起原子弹计划”的简化叙事：信件主要由西拉德推动和起草，爱因斯坦贡献的是判断与公共声望。",
+  "slices": [
+    {
+      "slice_id": "einstein-1939-letter",
+      "date": "1939-08-02",
+      "date_label": "1939年8月",
+      "title": "是否签署致罗斯福的铀裂变警告信",
+      "question": "一位公开的和平主义者，是否应借个人声望敦促美国政府重视可能的核武器竞赛？",
+      "context": "核裂变刚被确认，纳粹德国已控制捷克斯洛伐克的铀矿来源。西拉德等流亡科学家希望借爱因斯坦的名望把风险送达总统。",
+      "known_at_cutoff": ["铀链式反应可能释放巨大能量，但工程可行性尚未证实。", "德国科学实力强，欧洲战争风险迅速上升。", "爱因斯坦长期公开支持和平主义和国际主义。"],
+      "unknown_at_cutoff": ["德国是否正在组织核武器项目。", "美国政府会资助基础研究还是推进武器化。", "签名的长期政治与道德后果。"],
+      "tensions": ["和平主义原则 vs 单边核垄断风险", "科学不确定性 vs 灾难预防", "个人声望 vs 政策失控"],
+      "hypotheses": [
+        {"hypothesis_id": "sign-warning", "label": "签署警告并建议政府协调研究", "probability": 0.59, "basis": "纳粹威胁构成其和平主义中的紧急例外，而信件当时聚焦警告和研究协调。", "evidence_ids": ["einstein-e1", "einstein-e2"]},
+        {"hypothesis_id": "warn-belgium", "label": "只通过私人渠道保护铀矿供应", "probability": 0.24, "basis": "较少推动国家武器计划，也曾是讨论中的替代路径。", "evidence_ids": ["einstein-e2"]},
+        {"hypothesis_id": "refuse", "label": "拒绝介入军事政策", "probability": 0.17, "basis": "符合一贯和平主义，却无法回应纳粹可能率先取得武器的尾部风险。", "evidence_ids": ["einstein-e1"]}
+      ],
+      "evidence": [
+        {"evidence_id": "einstein-e1", "date": "1939-08-02", "kind": "致总统书信", "proximity": "同期直接材料", "summary": "信件由西拉德主导起草、爱因斯坦签署，警告铀链式反应与极强炸弹的可能，并建议政府建立联系机制。", "source_title": "美国能源部：核安全历史时间线", "source_url": "https://www.energy.gov/media/345644", "confidence": "高"},
+        {"evidence_id": "einstein-e2", "date": "1939", "kind": "政府历史档案", "proximity": "基于同期文件", "summary": "能源部历史明确区分1939年的铀咨询委员会与后来规模更大的曼哈顿计划，避免把因果链压缩成一封信。", "source_title": "DOE：Manhattan Project 历史", "source_url": "https://www.energy.gov/sites/prod/files/Manhattan_Project_2010.pdf", "confidence": "高"},
+        {"evidence_id": "einstein-e3", "date": "1900—1955", "kind": "学术档案目录", "proximity": "来源背景", "summary": "爱因斯坦文献项目收录约90,000条已知手稿和通信记录，为跨时期人格变化提供材料基础。", "source_title": "Caltech Einstein Papers Project", "source_url": "https://www.einstein.caltech.edu/", "confidence": "高"}
+      ]
+    }
+  ]
+}

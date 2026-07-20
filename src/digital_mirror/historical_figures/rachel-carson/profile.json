@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "figure_id": "rachel-carson",
+  "name": "蕾切尔·卡森",
+  "native_name": "RACHEL CARSON",
+  "life": "1907—1964",
+  "field": "生态科学 · 公共写作",
+  "tagline": "证据尚有争论时，科学写作者是否应该公开报警",
+  "accent": "forest",
+  "archive_scale": "手稿、研究卡片、通信、出版材料与行业回应",
+  "status": "研究原型",
+  "method_note": "卡森切片既不把她塑造成孤胆英雄，也不照搬化工行业的攻击，而是重建资料搜集、科学不确定性、健康压力和公共表达策略。",
+  "slices": [
+    {
+      "slice_id": "carson-1958-silent-spring",
+      "date": "1958-01-27",
+      "date_label": "1958年1月",
+      "title": "从来信到《寂静的春天》",
+      "question": "收到DDT空中喷洒导致鸟类死亡的来信后，是继续寻找他人写作、发表短文，还是亲自进行多年系统调查？",
+      "context": "卡森已是知名自然写作者，但最初并不打算亲自写一本农药专著。奥尔加·赫金斯的来信把地方喷洒造成的生态损害带到她面前。",
+      "known_at_cutoff": ["已有研究和零散事件质疑持久性农药的非目标影响。", "农药也被用于农业增产和控制传染病媒介。", "卡森具备生物学训练、写作影响力和出版渠道。"],
+      "unknown_at_cutoff": ["四年调查能否形成足够扎实且可读的公共论证。", "化工行业会采取何种法律与宣传反击。", "个人健康是否允许完成长期项目。"],
+      "tensions": ["科学谨慎 vs 公共预警", "生态代价 vs 农业与卫生收益", "私人写作生活 vs 高强度争议"],
+      "hypotheses": [
+        {"hypothesis_id": "full-investigation", "label": "亲自展开长期调查并写成专著", "probability": 0.54, "basis": "她已尝试寻找其他作者而未果，个人能力和道德责任逐渐把完整调查变成最匹配的选择。", "evidence_ids": ["carson-e1", "carson-e2"]},
+        {"hypothesis_id": "article", "label": "先发表范围有限的杂志文章", "probability": 0.28, "basis": "能更快预警并控制风险，但难以整合生态机制、案例和政策问题。", "evidence_ids": ["carson-e1"]},
+        {"hypothesis_id": "refer-others", "label": "继续推动其他科学家或记者写作", "probability": 0.18, "basis": "减少个人负担，却延续此前无人愿承担完整项目的问题。", "evidence_ids": ["carson-e2"]}
+      ],
+      "evidence": [
+        {"evidence_id": "carson-e1", "date": "1958-01-27", "kind": "私人来信", "proximity": "同期直接材料", "summary": "耶鲁档案保存赫金斯关于DDT喷洒和鸟类死亡的来信，被视为推动该写作项目的重要材料。", "source_title": "Yale Beinecke：And What If No Birds Sing?", "source_url": "https://beinecke.library.yale.edu/article/and-what-if-no-birds-sing", "confidence": "高"},
+        {"evidence_id": "carson-e2", "date": "1958—1962", "kind": "手稿与研究档案", "proximity": "同期材料集合", "summary": "卡森文件包含手稿、笔记、书信、剪报与出版材料，可追踪论证如何在多年调查中形成。", "source_title": "Yale Beinecke：Rachel Carson Papers", "source_url": "https://beinecke.library.yale.edu/collections/highlights/rachel-carson-papers", "confidence": "高"},
+        {"evidence_id": "carson-e3", "date": "1962—1963", "kind": "出版与政策结果", "proximity": "事件结果（不进入盲测）", "summary": "连载和出版引发行业反击、联邦调查与国会听证；这些结果不得倒灌进1958年决策输入。", "source_title": "美国环保署：Rachel Carson", "source_url": "https://www.epa.gov/archive/epa/aboutepa/rachel-carson.html", "confidence": "中高"}
+      ]
+    }
+  ]
+}

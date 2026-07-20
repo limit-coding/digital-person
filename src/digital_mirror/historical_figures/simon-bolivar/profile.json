@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "figure_id": "simon-bolivar",
+  "name": "西蒙·玻利瓦尔",
+  "native_name": "SIMÓN BOLÍVAR",
+  "life": "1783—1830",
+  "field": "独立运动 · 制宪政治",
+  "tagline": "赢得独立之后，怎样避免共和国再次崩解",
+  "accent": "jade",
+  "archive_scale": "1813—1830年系统保存的通信、演说与政令",
+  "status": "研究原型",
+  "method_note": "玻利瓦尔很早就系统保存收发通信。其政治文本同时包含共和理想、对社会分裂的忧虑和强行政权倾向，适合展示同一人物内部并存的价值冲突。",
+  "slices": [
+    {
+      "slice_id": "bolivar-1819-angostura",
+      "date": "1819-02-15",
+      "date_label": "1819年2月",
+      "title": "安戈斯图拉制宪演说",
+      "question": "新共和国应优先扩大直接民主，还是以强行政权、两院制和公共教育来压住战争与分裂风险？",
+      "context": "独立战争仍在继续，此前的委内瑞拉共和国已经失败。制宪既要反对殖民专制，也要处理地区、阶层与军事权力的碎片化。",
+      "known_at_cutoff": ["此前共和国在战争和内部冲突中崩溃。", "新国家横跨差异巨大的地区和社会群体。", "玻利瓦尔公开反对君主制，但担忧简单移植制度。"],
+      "unknown_at_cutoff": ["统一后的大哥伦比亚能否维持地区合作。", "强行政权会稳定共和国还是演变为个人统治。", "废奴与公民平等能以何种速度落实。"],
+      "tensions": ["自由共和 vs 行政能力", "制度借鉴 vs 本地现实", "战争领导权 vs 文官政治"],
+      "hypotheses": [
+        {"hypothesis_id": "strong-republic", "label": "建立强行政权约束下的代议共和国", "probability": 0.56, "basis": "其既反对君主制，又反复从此前失败推导出对稳定行政和制度制衡的需求。", "evidence_ids": ["bolivar-e1", "bolivar-e2"]},
+        {"hypothesis_id": "central-command", "label": "延续高度集中的战时统治", "probability": 0.27, "basis": "战争现实支持集中权力，但与正式制宪和共和合法性的目标存在张力。", "evidence_ids": ["bolivar-e2"]},
+        {"hypothesis_id": "direct-democracy", "label": "采用更直接和分散的民主制度", "probability": 0.17, "basis": "更接近激进平等诉求，却与他对社会分裂和制度移植的担忧冲突。", "evidence_ids": ["bolivar-e1"]}
+      ],
+      "evidence": [
+        {"evidence_id": "bolivar-e1", "date": "1819-02-15", "kind": "制宪演说", "proximity": "同期直接材料", "summary": "安戈斯图拉演说集中呈现其对共和制度、行政稳定、教育和社会平等的组合判断。", "source_title": "美国国会图书馆：安戈斯图拉演说", "source_url": "https://www.loc.gov/item/20011530", "confidence": "高"},
+        {"evidence_id": "bolivar-e2", "date": "1813—1830", "kind": "通信与政令档案", "proximity": "跨期直接材料", "summary": "联合国教科文组织世界记忆名录说明，玻利瓦尔自1813年起系统保存来信及发信草稿。", "source_title": "UNESCO：玻利瓦尔文稿档案", "source_url": "https://www.unesco.org/en/memory-world/lac/writings-liberator-simon-bolivar-1813-1830", "confidence": "高"},
+        {"evidence_id": "bolivar-e3", "date": "1819", "kind": "学术转写与导读", "proximity": "研究辅助材料", "summary": "布朗大学数字项目提供演说文本和独立战争语境，可用于核对翻译和概念背景。", "source_title": "Brown University：Address at Angostura", "source_url": "https://library.brown.edu/create/modernlatinamerica/chapters/chapter-2-the-colonial-foundations/primary-documents-with-accompanying-discussion-questions/document-3-simon-bolivar-address-at-the-congress-of-angostura-1819/", "confidence": "中高"}
+      ]
+    }
+  ]
+}

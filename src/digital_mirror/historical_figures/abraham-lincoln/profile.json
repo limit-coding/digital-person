@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "figure_id": "abraham-lincoln",
+  "name": "亚伯拉罕·林肯",
+  "native_name": "ABRAHAM LINCOLN",
+  "life": "1809—1865",
+  "field": "政治 · 战争领导",
+  "tagline": "战争目标、宪法权限与解放之间的艰难时点",
+  "accent": "indigo",
+  "archive_scale": "美国国会图书馆约20,000件数字化文件",
+  "status": "研究原型",
+  "method_note": "林肯档案包含来往信件、演说、草稿与内阁相关材料，可以区分公开论证、私人判断和最终行政行为。",
+  "slices": [
+    {
+      "slice_id": "lincoln-1862-emancipation",
+      "date": "1862-07-22",
+      "date_label": "1862年7月",
+      "title": "首次向内阁提出解放宣言草案",
+      "question": "应当立即把解放叛乱地区奴隶确立为战争措施，还是等待军事胜利与更有利的政治时机？",
+      "context": "内战久拖不决，边境州、宪法权限、军队士气、欧洲舆论和废奴压力同时作用于总统决策。",
+      "known_at_cutoff": [
+        "国会和废奴派持续要求政府采取更明确的反奴隶制措施。",
+        "总统需要维持仍留在联邦内的蓄奴边境州支持。",
+        "以战时总司令权为依据的措施，其法律和军事效果仍有争论。"
+      ],
+      "unknown_at_cutoff": [
+        "北方选民与军队会如何反应。",
+        "宣言能否真正作用于联邦尚未控制的地区。",
+        "何时会出现足以支撑发布宣言的军事胜利。"
+      ],
+      "tensions": [
+        "道德目标 vs 联盟政治",
+        "立即行动 vs 战场时机",
+        "总统权限 vs 长期宪政后果"
+      ],
+      "hypotheses": [
+        {
+          "hypothesis_id": "wait-victory",
+          "label": "确定政策，但等待军事胜利后公布",
+          "probability": 0.52,
+          "basis": "草案已经成形，主要不确定性更像发布时机而非是否转向解放政策。",
+          "evidence_ids": ["lincoln-e1", "lincoln-e2"]
+        },
+        {
+          "hypothesis_id": "announce-now",
+          "label": "立即公布初步宣言",
+          "probability": 0.31,
+          "basis": "军事与道德压力都支持迅速行动，但可能被解读为战败中的绝望措施。",
+          "evidence_ids": ["lincoln-e1"]
+        },
+        {
+          "hypothesis_id": "compensated-only",
+          "label": "继续以补偿解放和殖民方案为主",
+          "probability": 0.17,
+          "basis": "这仍是林肯政策组合的一部分，却越来越难单独回应战争局势。",
+          "evidence_ids": ["lincoln-e2"]
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "lincoln-e1",
+          "date": "1862-07-22",
+          "kind": "总统手稿",
+          "proximity": "同期直接材料",
+          "summary": "林肯在7月22日向内阁提交初步解放宣言草案，表明政策选项已进入正式决策阶段。",
+          "source_title": "美国国会图书馆：林肯与解放",
+          "source_url": "https://www.loc.gov/collections/abraham-lincoln-papers/articles-and-essays/abraham-lincoln-and-emancipation/",
+          "confidence": "高"
+        },
+        {
+          "evidence_id": "lincoln-e2",
+          "date": "1862-09-22",
+          "kind": "官方文件",
+          "proximity": "事件结果（不进入盲测）",
+          "summary": "初步宣言在安提坦战役之后公布，并保留了补偿解放与自愿移居等政策内容。",
+          "source_title": "林肯文件：初步解放宣言",
+          "source_url": "https://tile.loc.gov/storage-services/service/mss/mal/185/1859300/1859300.pdf",
+          "confidence": "高"
+        },
+        {
+          "evidence_id": "lincoln-e3",
+          "date": "1861—1865",
+          "kind": "档案目录",
+          "proximity": "来源背景",
+          "summary": "国会图书馆林肯文件收藏提供信件、草稿、演说和行政材料的系统索引。",
+          "source_title": "Abraham Lincoln Papers 收藏说明",
+          "source_url": "https://www.loc.gov/collections/abraham-lincoln-papers/about-this-collection/",
+          "confidence": "高"
+        }
+      ]
+    }
+  ]
+}

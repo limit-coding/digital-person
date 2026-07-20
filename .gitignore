@@ -1,4 +1,7 @@
 __pycache__/
+.venv/
+*.egg-info/
+build/
 *.py[cod]
 .pytest_cache/
 
@@ -11,6 +14,7 @@ artifacts/
 # Local credentials, databases, logs, and editor state.
 .env
 .env.*
+!.env.example
 *.sqlite
 *.sqlite3
 *.db

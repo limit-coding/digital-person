@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "figure_id": "mahatma-gandhi",
+  "name": "莫罕达斯·甘地",
+  "native_name": "MOHANDAS GANDHI",
+  "life": "1869—1948",
+  "field": "反殖民运动 · 政治伦理",
+  "tagline": "怎样把日常生活变成一场全国政治行动",
+  "accent": "saffron",
+  "archive_scale": "政府整理的《甘地全集》100卷及专题档案",
+  "status": "研究原型",
+  "method_note": "甘地留下大量文章、书信和演说。数字切片特别区分其公开的道德论证、运动组织策略和英国殖民当局的同期回应。",
+  "slices": [
+    {
+      "slice_id": "gandhi-1930-salt",
+      "date": "1930-03-02",
+      "date_label": "1930年3月",
+      "title": "盐税抗议的选择",
+      "question": "下一轮不合作运动应选择宏大的宪政议题，还是以人人都能理解和参与的盐税作为突破口？",
+      "context": "国大党已经授权甘地决定何时发动公民抗命。挑战必须既能动员全国，又能维持非暴力纪律并暴露殖民统治的日常成本。",
+      "known_at_cutoff": [
+        "盐税广泛影响普通人，并由殖民政府垄断执行。",
+        "国大党工作委员会已授权发动公民抗命。",
+        "此前群众运动曾因暴力事件被甘地中止。"
+      ],
+      "unknown_at_cutoff": [
+        "英国当局会忽视、镇压还是谈判。",
+        "长途行军能否保持非暴力纪律。",
+        "地方性盐法抗议能否转化为全国政治动员。"
+      ],
+      "tensions": ["象征清晰度 vs 政策广度", "群众规模 vs 非暴力纪律", "最后通牒 vs 保留谈判"],
+      "hypotheses": [
+        {"hypothesis_id": "salt-march", "label": "公开预告并徒步挑战盐法", "probability": 0.64, "basis": "盐税具备普遍性、可行动性和道德象征，且可用行军训练和展示纪律。", "evidence_ids": ["gandhi-e1", "gandhi-e2"]},
+        {"hypothesis_id": "broader-boycott", "label": "发动更广泛的商品与税收抵制", "probability": 0.23, "basis": "议题覆盖更广，但行动焦点较弱、组织失控风险更高。", "evidence_ids": ["gandhi-e1"]},
+        {"hypothesis_id": "negotiate-first", "label": "继续谈判并推迟公民抗命", "probability": 0.13, "basis": "能降低即时冲突，却难以回应独立决议后的动员期待。", "evidence_ids": ["gandhi-e2"]}
+      ],
+      "evidence": [
+        {"evidence_id": "gandhi-e1", "date": "1930-01—02", "kind": "会议与公开文章", "proximity": "同期直接材料", "summary": "十一项诉求已经公开，国大党工作委员会随后授权甘地选择发起公民抗命的时间和方式。", "source_title": "Gandhi Heritage Portal：盐税抗争背景", "source_url": "https://www.gandhiheritageportal.org/background-to-the-salt-satyagraha", "confidence": "高"},
+        {"evidence_id": "gandhi-e2", "date": "1930-03-02", "kind": "致总督书信", "proximity": "同期直接材料", "summary": "致欧文总督的信系统陈述不满并提前说明将违反盐法，把最后通牒与非暴力承诺放在同一文本中。", "source_title": "《甘地全集》第43卷（专题索引）", "source_url": "https://gandhiheritageportal.in/cwmg_volumelist/ZW4%3D", "confidence": "高"},
+        {"evidence_id": "gandhi-e3", "date": "1930-03-12", "kind": "行动记录", "proximity": "事件结果（不进入盲测）", "summary": "甘地与选定的同行者从萨巴尔马蒂出发前往丹迪，结果仅用于评测此前的行动预测。", "source_title": "盐税抗争时间线", "source_url": "https://www.gandhiheritageportal.org/background-to-the-salt-satyagraha", "confidence": "高"}
+      ]
+    }
+  ]
+}

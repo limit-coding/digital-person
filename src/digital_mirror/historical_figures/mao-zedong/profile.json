@@ -1,0 +1,168 @@
+{
+  "schema_version": 2,
+  "figure_id": "mao-zedong",
+  "name": "毛泽东",
+  "native_name": "MAO ZEDONG",
+  "life": "1893—1976",
+  "field": "政治 · 革命 · 国家治理",
+  "tagline": "在革命延续、组织控制与政治安全之间",
+  "accent": "vermilion",
+  "archive_scale": "文稿、年谱、会议文件与多方回忆",
+  "status": "三时期研究原型",
+  "method_note": "这些数字切片不声称读取人物内心。它们把同期文件中的明确主张、实际组织动作和后来的研究性叙述分层呈现，并保留竞争解释。不同阶段不能被压缩成一个固定人格。",
+  "periods": [
+    {
+      "period_id": "mao-revolution-1927-1949",
+      "label": "革命与战争",
+      "range": "1927—1949",
+      "headline": "从根据地生存到全国政权竞争",
+      "context": "这一时期的判断持续受到军事生存、农村动员、党内路线和国际局势约束。1949年初，军事优势与和平谈判同时进入决策面。",
+      "anchors": ["政治谈判与军事推进并不是简单互斥选项。", "公开文件把和平条件与重组政治秩序联系起来。", "战场优势并未自动消除战争继续扩大的代价。"],
+      "unknowns": ["谈判是否会产生可执行协议。", "渡江作战的实际代价与国际反应。", "全国政权转换后的治理难题。"],
+      "evidence": [{"evidence_id": "mao-1949-e1", "date": "1948-12-30", "kind": "公开文章", "proximity": "截止点前直接材料", "summary": "文章明确反对在胜负未定时停止革命，同时保留以政治条件处理和平问题的空间。", "source_title": "Carry the Revolution Through to the End", "source_url": "https://www.marxists.org/reference/archive/mao/selected-works/volume-4/mswv4_70.htm", "confidence": "高"}],
+      "source_slice_ids": ["mao-1949-peace"]
+    },
+    {
+      "period_id": "mao-state-1949-1965",
+      "label": "建国与路线探索",
+      "range": "1949—1965",
+      "headline": "国家建构、工业化与制度张力",
+      "context": "新国家的工业化、农业、地方关系和苏联经验进入同一张政策桌。1956年的《论十大关系》集中呈现了对资源配置和制度安排的再权衡。",
+      "anchors": ["重工业优先仍被视为工业化核心。", "农业和轻工业被重新表述为支持长期工业化的条件。", "中央集中与地方积极性被同时纳入政策讨论。"],
+      "unknowns": ["再平衡能否形成稳定制度。", "农业剩余、投资速度和民生之间的实际约束。", "中苏关系变化会怎样影响政策空间。"],
+      "evidence": [{"evidence_id": "mao-1956-e1", "date": "1956-04-25", "kind": "政治局扩大会议讲话", "proximity": "同期直接材料", "summary": "讲话以苏联经验为参照，系统讨论工业、农业、中央、地方等十组关系。", "source_title": "On the Ten Major Relationships", "source_url": "https://www.marxists.org/reference/archive/mao/selected-works/volume-5/mswv5_51.htm", "confidence": "高"}],
+      "source_slice_ids": ["mao-1956-ten-relations"]
+    },
+    {
+      "period_id": "mao-cultural-revolution-1966-1976",
+      "label": "文化大革命时期",
+      "range": "1966—1976",
+      "headline": "持续革命、组织重构与失控风险",
+      "context": "阶级斗争判断、党内路线冲突和群众动员被重新连接。人物提问必须避免把后来十年的结果泄漏给1966年启动时点。",
+      "anchors": ["1962年以来阶级斗争重新成为重要政治判断框架。", "文化批判在1966年转向党内路线与组织问题。", "全面动员与保持生产、组织控制之间存在持续张力。"],
+      "unknowns": ["群众动员突破组织边界后的规模与方向。", "军队与地方权力结构最终扮演的角色。", "运动对社会、教育和经济的长期代价。"],
+      "evidence": [{"evidence_id": "mao-e1", "date": "1966-05-16", "kind": "中央文件", "proximity": "同期直接材料", "summary": "通知撤销二月提纲及原五人小组，并把批判对象扩大到党政军和文化领域。", "source_title": "中国共产党新闻网：五一六通知", "source_url": "https://cpc.people.com.cn/BIG5/64162/64165/79703/79794/5703725.html", "confidence": "高"}],
+      "source_slice_ids": ["mao-1966-may"]
+    }
+  ],
+  "slices": [
+    {
+      "slice_id": "mao-1949-peace",
+      "date": "1949-01-14",
+      "date_label": "1949年1月",
+      "title": "胜势中的和平条件",
+      "question": "在军事优势扩大时，是立即推进到底、接受无条件停战，还是提出改变政治秩序的谈判条件？",
+      "context": "三大战役改变力量对比，南京方面释放和平信号。公开立场需要同时处理战争推进、政治合法性和停战风险。",
+      "known_at_cutoff": ["解放军已取得重大军事优势。", "社会存在结束战争的强烈期待。", "没有政治条件的停战可能让原有军事与政治结构继续存在。"],
+      "unknown_at_cutoff": ["南京方面是否接受实质性和平条件。", "渡江作战的军事和政治代价。", "新政权能否迅速接管全国治理。"],
+      "tensions": ["军事胜势 vs 战争代价", "和平诉求 vs 政治重组", "立即推进 vs 谈判合法性"],
+      "hypotheses": [
+        {"hypothesis_id": "conditional-talks", "label": "提出条件并保留军事推进", "probability": 0.55, "basis": "同期公开文本同时拒绝无原则停战，并列出可以进入谈判的政治条件。", "evidence_ids": ["mao-1949-e1", "mao-1949-e2"]},
+        {"hypothesis_id": "immediate-crossing", "label": "不等待谈判，立即全面推进", "probability": 0.3, "basis": "军事胜势和对停战拖延的警惕支持这一选项，但会削弱争取和平合法性的空间。", "evidence_ids": ["mao-1949-e1"]},
+        {"hypothesis_id": "unconditional-pause", "label": "接受停战并冻结现状", "probability": 0.15, "basis": "能快速降低战争损失，但与当时要求改变旧政治军事结构的公开判断冲突。", "evidence_ids": ["mao-1949-e2"]}
+      ],
+      "evidence": [
+        {"evidence_id": "mao-1949-e1", "date": "1948-12-30", "kind": "公开文章", "proximity": "截止点前直接材料", "summary": "文章明确反对在胜负未定时停止革命，同时把对方和平信号理解为需要政治判断的策略。", "source_title": "Carry the Revolution Through to the End", "source_url": "https://www.marxists.org/reference/archive/mao/selected-works/volume-4/mswv4_70.htm", "confidence": "高"},
+        {"evidence_id": "mao-1949-e2", "date": "1949-01-14", "kind": "时局声明", "proximity": "同期直接材料", "summary": "声明提出以惩办战犯、废除旧制度和改编军队等条件作为和平谈判基础。", "source_title": "Statement on the Present Situation", "source_url": "https://www.marxists.org/reference/archive/mao/selected-works/volume-4/mswv4_71.htm", "confidence": "高"}
+      ]
+    },
+    {
+      "slice_id": "mao-1956-ten-relations",
+      "date": "1956-04-25",
+      "date_label": "1956年4月",
+      "title": "《论十大关系》的政策再平衡",
+      "question": "在重工业优先的工业化目标下，是继续机械复制苏联配置，还是重新安排农业、轻工业、地方和国防的权重？",
+      "context": "社会主义改造接近完成，苏联模式提供了工业化参照，也暴露出资源过度集中与比例失衡问题。",
+      "known_at_cutoff": ["重工业需要长期资本积累和农业支持。", "农业与轻工业关系到供给、财政和民生。", "中央计划与地方积极性之间已经出现实际摩擦。"],
+      "unknown_at_cutoff": ["新的比例主张能否转化为稳定政策。", "增长速度与经济平衡之间的边界。", "未来中苏分歧对技术和安全资源的影响。"],
+      "tensions": ["重工业速度 vs 农业轻工业基础", "中央集中 vs 地方积极性", "苏联经验 vs 中国条件"],
+      "hypotheses": [
+        {"hypothesis_id": "rebalance", "label": "系统调整十组关系", "probability": 0.6, "basis": "讲话明确以调动国内外积极因素为目标，并逐组讨论资源与权力关系。", "evidence_ids": ["mao-1956-e1", "mao-1956-e2"]},
+        {"hypothesis_id": "incremental", "label": "保持重工业核心，只作有限修正", "probability": 0.27, "basis": "讲话并未放弃重工业优先，而是论证农业和轻工业如何更好地支持工业化。", "evidence_ids": ["mao-1956-e1"]},
+        {"hypothesis_id": "copy-soviet", "label": "继续沿用高度集中的苏联配置", "probability": 0.13, "basis": "已有制度惯性支持这一选项，但讲话本身正是针对机械照搬提出反思。", "evidence_ids": ["mao-1956-e2"]}
+      ],
+      "evidence": [
+        {"evidence_id": "mao-1956-e1", "date": "1956-04-25", "kind": "政治局扩大会议讲话", "proximity": "同期直接材料", "summary": "讲话讨论重工业与轻工业农业、中央与地方等十组关系，目标是调动更多积极因素。", "source_title": "On the Ten Major Relationships", "source_url": "https://www.marxists.org/reference/archive/mao/selected-works/volume-5/mswv5_51.htm", "confidence": "高"},
+        {"evidence_id": "mao-1956-e2", "date": "1956-04-25", "kind": "历史文献译本", "proximity": "同期文本整理", "summary": "文献显示对苏联经验既有借鉴也有批评，不能简化为全面转向或完全否定。", "source_title": "Wilson Center Digital Archive：Ten Major Relationships", "source_url": "https://digitalarchive.wilsoncenter.org/document/mao-zedong-ten-major-relationships-april-25-1956", "confidence": "中高"}
+      ]
+    },
+    {
+      "slice_id": "mao-1966-may",
+      "date": "1966-05-16",
+      "date_label": "1966年5月",
+      "title": "“五一六通知”形成前夜",
+      "question": "文化批判应当停留在学术领域，还是转向对党内权力与路线的全面动员？",
+      "context": "二月提纲试图把争论限制为学术问题；到五月，原有文化革命领导机构及其路线面临被撤销和重组。",
+      "known_at_cutoff": [
+        "1962年以来，阶级斗争重新成为重要政治判断框架。",
+        "围绕《海瑞罢官》的批判已经从学术争论转向政治路线问题。",
+        "二月提纲与更激进的运动方向发生冲突，中央内部存在明显分歧。"
+      ],
+      "unknown_at_cutoff": [
+        "群众动员突破既有组织边界后能否受到控制。",
+        "党政体系的抵抗规模以及军队最终扮演的角色。",
+        "运动对教育、生产、干部体系和普通人的长期代价。"
+      ],
+      "tensions": [
+        "持续革命 vs 制度秩序",
+        "群众动员 vs 组织可控性",
+        "意识形态判断 vs 权力安全"
+      ],
+      "hypotheses": [
+        {
+          "hypothesis_id": "reorganize",
+          "label": "重组机构并把斗争指向党内",
+          "probability": 0.57,
+          "basis": "同期文件把问题从文化领域扩大到党政军中的所谓资产阶级代表人物，并伴随组织重构。",
+          "evidence_ids": ["mao-e1", "mao-e2"]
+        },
+        {
+          "hypothesis_id": "controlled-escalation",
+          "label": "以分阶段方式扩大运动",
+          "probability": 0.27,
+          "basis": "同期也存在对工交等领域分期分批、保持生产的安排，说明全面动员与控制并存。",
+          "evidence_ids": ["mao-e3"]
+        },
+        {
+          "hypothesis_id": "academic-only",
+          "label": "仍将争论限制在学术批判",
+          "probability": 0.16,
+          "basis": "二月提纲代表这一选项，但在截止点附近已经失势。",
+          "evidence_ids": ["mao-e1"]
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "mao-e1",
+          "date": "1966-05-16",
+          "kind": "中央文件",
+          "proximity": "同期直接材料",
+          "summary": "通知撤销二月提纲及原五人小组，设立新的中央文革小组，并把批判对象扩大到党政军和文化领域。",
+          "source_title": "中国共产党新闻网：五一六通知",
+          "source_url": "https://cpc.people.com.cn/BIG5/64162/64165/79703/79794/5703725.html",
+          "confidence": "高"
+        },
+        {
+          "evidence_id": "mao-e2",
+          "date": "1966-05-16",
+          "kind": "文件全文",
+          "proximity": "同期文本镜像",
+          "summary": "文件把1962年以来的阶级斗争判断与当下文化、组织问题连接起来。",
+          "source_title": "May 16 Circular 全文档案",
+          "source_url": "https://www.marxists.org/subject/china/documents/cpc/cc_gpcr.htm",
+          "confidence": "高"
+        },
+        {
+          "evidence_id": "mao-e3",
+          "date": "1966-07-02",
+          "kind": "官方大事记",
+          "proximity": "稍后同期记录",
+          "summary": "针对工业交通和基本建设单位的通知仍强调分期分批并保证国家任务，构成对“完全失控动员”解释的限制性证据。",
+          "source_title": "中国共产党大事记·1966年",
+          "source_url": "https://cpc.people.com.cn/GB/64162/64164/4416081.html",
+          "confidence": "中高"
+        }
+      ]
+    }
+  ]
+}

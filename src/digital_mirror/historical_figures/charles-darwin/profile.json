@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "figure_id": "charles-darwin",
+  "name": "查尔斯·达尔文",
+  "native_name": "CHARLES DARWIN",
+  "life": "1809—1882",
+  "field": "自然史 · 科学写作",
+  "tagline": "二十年积累撞上一个必须立即决定的来信",
+  "accent": "moss",
+  "archive_scale": "超过15,000封往来书信及完整著作档案",
+  "status": "研究原型",
+  "method_note": "达尔文的同期书信密度高、时间标注清楚，而且同时保留了朋友的建议与家庭处境，是最适合做可评测认知切片的人物之一。",
+  "slices": [
+    {
+      "slice_id": "darwin-1858-wallace",
+      "date": "1858-06-18",
+      "date_label": "1858年6月",
+      "title": "收到华莱士论文之后",
+      "question": "面对几乎独立得出同一理论的同行，是让出优先权、联合发表，还是立即单独抢先发表？",
+      "context": "达尔文已经秘密研究物种变化约二十年，华莱士从特尔纳特寄来的论文突然提出了高度相似的自然选择机制。",
+      "known_at_cutoff": [
+        "1842年和1844年的手稿能够证明达尔文较早形成相关理论。",
+        "莱尔与胡克长期知道他的研究，并能作为可信中间人。",
+        "华莱士的来信要求把论文转交莱尔，但没有留下明确的发表安排。"
+      ],
+      "unknown_at_cutoff": [
+        "华莱士会如何看待联合发表及优先权安排。",
+        "学界是否接受自然选择机制。",
+        "家庭疾病和丧子会在多大程度上中断达尔文处理此事。"
+      ],
+      "tensions": [
+        "学术公平 vs 二十年工作的优先权",
+        "完整论证 vs 立即公开",
+        "职业转折 vs 家庭危机"
+      ],
+      "hypotheses": [
+        {
+          "hypothesis_id": "joint",
+          "label": "接受由友人安排联合发表",
+          "probability": 0.58,
+          "basis": "他立即把论文交给莱尔处理，并反复表现出让出优先权与保护自身工作之间的纠结。",
+          "evidence_ids": ["darwin-e1", "darwin-e2"]
+        },
+        {
+          "hypothesis_id": "yield",
+          "label": "把优先权完全让给华莱士",
+          "probability": 0.25,
+          "basis": "书信显示他一度准备这样做，但莱尔和胡克的介入改变了可行方案。",
+          "evidence_ids": ["darwin-e2"]
+        },
+        {
+          "hypothesis_id": "rush-alone",
+          "label": "立即单独抢先发表",
+          "probability": 0.17,
+          "basis": "能最大化个人优先权，却与他在书信中表达的公平顾虑不完全一致。",
+          "evidence_ids": ["darwin-e1"]
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "darwin-e1",
+          "date": "1858-06-18",
+          "kind": "私人书信",
+          "proximity": "同期直接材料",
+          "summary": "致莱尔信中，达尔文震惊于理论的高度重合，并把华莱士材料交给长期知情的友人处理。",
+          "source_title": "Darwin Correspondence Project：1858—1859",
+          "source_url": "https://www.darwinproject.ac.uk/letters/darwins-life-letters/darwin-letters-1858-1859-origin",
+          "confidence": "高"
+        },
+        {
+          "evidence_id": "darwin-e2",
+          "date": "1858-06-29",
+          "kind": "书信组",
+          "proximity": "同期直接材料",
+          "summary": "书信记录他曾准备向华莱士让出优先权，随后接受莱尔与胡克提出的联合呈交方案。",
+          "source_title": "Darwin Project：大书之前",
+          "source_url": "https://www.darwinproject.ac.uk/letters/darwins-works-letters/origin-big-book",
+          "confidence": "高"
+        },
+        {
+          "evidence_id": "darwin-e3",
+          "date": "1858-07-01",
+          "kind": "学会记录",
+          "proximity": "事件结果（不进入盲测）",
+          "summary": "莱尔与胡克将两人的材料共同提交林奈学会；这一结果用于评测预测，而不应泄漏给截止点模型。",
+          "source_title": "Darwin Project：物种起源专题",
+          "source_url": "https://www.darwinproject.ac.uk/origin-species",
+          "confidence": "高"
+        }
+      ]
+    }
+  ]
+}

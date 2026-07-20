@@ -1,0 +1,70 @@
+{
+  "schema_version": 2,
+  "figure_id": "ludwig-van-beethoven",
+  "name": "路德维希·范·贝多芬",
+  "native_name": "LUDWIG VAN BEETHOVEN",
+  "life": "1770—1827",
+  "field": "作曲 · 钢琴 · 音乐公共文化",
+  "tagline": "当听觉逐渐退场，创作如何继续成为一种行动",
+  "accent": "gold",
+  "archive_scale": "书信、谈话簿、手稿、首版乐谱与同时代记录",
+  "status": "三时期研究原型",
+  "method_note": "贝多芬留下大量书信与创作手稿，但后来的浪漫主义英雄叙事很容易覆盖同期处境。提问界面区分其公开作品、私人书信和后人解释。",
+  "periods": [
+    {
+      "period_id": "beethoven-bonn-1770-1792",
+      "label": "波恩：学习与出走",
+      "range": "1770—1792",
+      "headline": "宫廷音乐环境中的早期训练",
+      "context": "这一时期的贝多芬仍在波恩，通过家庭、宫廷乐团与启蒙文化网络形成音乐能力，尚未成为后来那个欧洲闻名的维也纳作曲家。",
+      "anchors": ["在波恩接受键盘与作曲训练。", "进入宫廷音乐职业网络。", "1792年前往维也纳，职业与社会环境发生转换。"],
+      "unknowns": ["维也纳能否提供稳定赞助与声望。", "法国革命及启蒙理想会怎样进入他的作品。", "未来听力恶化及其职业后果。"],
+      "evidence": [{"evidence_id": "beethoven-p1-e1", "date": "1770—1792", "kind": "机构传记与档案目录", "proximity": "后设年表", "summary": "贝多芬故居的传记与数字档案提供波恩时期的家庭、教育和职业节点。", "source_title": "Beethoven-Haus Bonn：Biography", "source_url": "https://www.beethoven.de/en/g/biography", "confidence": "高"}],
+      "source_slice_ids": []
+    },
+    {
+      "period_id": "beethoven-vienna-1792-1815",
+      "label": "维也纳：突破与听觉危机",
+      "range": "1792—1815",
+      "headline": "公众成功、风格扩张与不可逆的身体变化",
+      "context": "贝多芬在维也纳建立钢琴家和作曲家声望，同时面对听力恶化。1802年的海利根施塔特文书显示绝望、社会退缩与继续创作之间的尖锐冲突。",
+      "anchors": ["以演奏、出版和赞助网络建立独立作曲家地位。", "听力问题逐步影响社交和职业身份。", "作品规模与形式在这一阶段显著扩张。"],
+      "unknowns": ["听力是否会恢复或继续恶化。", "战争与赞助结构将怎样改变维也纳音乐生活。", "个人危机是否会中断公开创作。"],
+      "evidence": [{"evidence_id": "beethoven-p2-e1", "date": "1802", "kind": "私人文书与机构档案", "proximity": "同期直接材料", "summary": "海利根施塔特文书是理解听觉危机、孤立感与创作承诺的关键同期材料。", "source_title": "Beethoven-Haus Bonn：Biography", "source_url": "https://www.beethoven.de/en/g/biography", "confidence": "高"}],
+      "source_slice_ids": ["beethoven-1802-heiligenstadt"]
+    },
+    {
+      "period_id": "beethoven-late-1815-1827",
+      "label": "晚期：沉默中的新语言",
+      "range": "1815—1827",
+      "headline": "完全失聪、家庭冲突与晚期作品",
+      "context": "公共演奏退场后，谈话簿成为重要交流媒介。家庭监护纠纷、健康问题与晚期弦乐四重奏、第九交响曲等作品并存。",
+      "anchors": ["谈话簿记录了他人对贝多芬说的话，但不完整保留他的口头回答。", "公开演奏能力与日常交流受到严重限制。", "晚期作品不能简单等同于一段无中介的私人独白。"],
+      "unknowns": ["听众会如何理解晚期作品的新形式。", "家庭纠纷是否可能稳定解决。", "未完成创作若继续发展会走向何处。"],
+      "evidence": [{"evidence_id": "beethoven-p3-e1", "date": "1818—1827", "kind": "谈话簿与作品手稿", "proximity": "同期材料", "summary": "谈话簿和手稿让晚期日常生活与创作过程可被交叉检查，同时也留下明显的记录空白。", "source_title": "Beethoven-Haus Bonn：Digital archive", "source_url": "https://www.beethoven.de/en", "confidence": "高"}],
+      "source_slice_ids": []
+    }
+  ],
+  "slices": [
+    {
+      "slice_id": "beethoven-1802-heiligenstadt",
+      "date": "1802-10-06",
+      "date_label": "1802年10月",
+      "title": "海利根施塔特文书形成之际",
+      "question": "在听觉恶化、社交痛苦与职业身份冲突下，是退出公共生活、停止创作，还是继续以作品维持行动？",
+      "context": "贝多芬在海利根施塔特休养期间写下给兄弟的文书，描述听觉困境、绝望和被艺术召回的理由。",
+      "known_at_cutoff": ["听力问题已经持续并影响社交。", "他仍有未完成的创作计划。", "音乐职业既依赖听觉和演奏，也可以通过作曲与出版延续。"],
+      "unknown_at_cutoff": ["听力恶化的最终程度。", "未来作品能否继续获得公开演出与理解。", "文书是否会在生前被他人读到。"],
+      "tensions": ["身体限制 vs 创作身份", "社会退缩 vs 公共作品", "绝望体验 vs 尚未完成的艺术任务"],
+      "hypotheses": [
+        {"hypothesis_id": "continue-compose", "label": "减少社交但继续作曲", "probability": 0.62, "basis": "文书把艺术使命写成阻止彻底退出的主要力量。", "evidence_ids": ["beethoven-e1", "beethoven-e2"]},
+        {"hypothesis_id": "withdraw", "label": "进一步退出公共演奏与社交", "probability": 0.26, "basis": "听觉困境已经带来回避、误解和强烈痛苦。", "evidence_ids": ["beethoven-e1"]},
+        {"hypothesis_id": "stop", "label": "停止主要音乐活动", "probability": 0.12, "basis": "这是危机中真实出现的极端可能，但与仍在推进的创作计划相冲突。", "evidence_ids": ["beethoven-e1"]}
+      ],
+      "evidence": [
+        {"evidence_id": "beethoven-e1", "date": "1802-10-06", "kind": "私人文书", "proximity": "同期直接材料", "summary": "文书明确并置了听觉带来的隔绝、绝望与因艺术尚未完成而继续生活的理由。", "source_title": "Beethoven-Haus Bonn：Biography", "source_url": "https://www.beethoven.de/en/g/biography", "confidence": "高"},
+        {"evidence_id": "beethoven-e2", "date": "1802", "kind": "创作与手稿记录", "proximity": "同期作品材料", "summary": "这一阶段仍有持续创作活动，限制了把文书只解释为彻底退场决定的读法。", "source_title": "Beethoven-Haus Bonn：Digital archive", "source_url": "https://www.beethoven.de/en", "confidence": "中高"}
+      ]
+    }
+  ]
+}
