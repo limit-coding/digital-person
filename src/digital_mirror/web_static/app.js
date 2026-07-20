@@ -11,6 +11,7 @@ const $ = (selector) => document.querySelector(selector);
 const figureOrder = [
   "mao-zedong", "charles-darwin", "abraham-lincoln", "winston-churchill",
   "mahatma-gandhi", "nelson-mandela", "albert-einstein", "simon-bolivar",
+  "liliuokalani", "mustafa-kemal-ataturk", "rachel-carson",
 ];
 
 async function api(path, options = {}) {

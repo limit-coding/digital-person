@@ -6,11 +6,14 @@ from digital_mirror.historical_catalog import catalog_root, load_catalog, public
 class HistoricalCatalogTests(unittest.TestCase):
     def test_global_catalog_loads_isolated_profiles(self):
         catalog = load_catalog()
-        self.assertGreaterEqual(len(catalog), 8)
+        self.assertGreaterEqual(len(catalog), 11)
         self.assertIn("mao-zedong", catalog)
         self.assertIn("mahatma-gandhi", catalog)
         self.assertIn("nelson-mandela", catalog)
         self.assertIn("simon-bolivar", catalog)
+        self.assertIn("liliuokalani", catalog)
+        self.assertIn("mustafa-kemal-ataturk", catalog)
+        self.assertIn("rachel-carson", catalog)
         for figure_id, profile in catalog.items():
             self.assertEqual(catalog_root().joinpath(figure_id).name, figure_id)
             self.assertEqual(profile["figure_id"], figure_id)

@@ -30,7 +30,7 @@ class WebAppTests(unittest.TestCase):
     def test_public_catalog_does_not_require_private_login(self):
         response = self.client.get("/api/public/figures")
         self.assertEqual(response.status_code, 200)
-        self.assertGreaterEqual(len(response.json()["figures"]), 8)
+        self.assertGreaterEqual(len(response.json()["figures"]), 11)
         self.assertIn("public", response.headers["cache-control"])
 
         detail = self.client.get("/api/public/figures/nelson-mandela")

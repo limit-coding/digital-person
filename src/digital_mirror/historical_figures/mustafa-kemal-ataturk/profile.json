@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "figure_id": "mustafa-kemal-ataturk",
+  "name": "穆斯塔法·凯末尔",
+  "native_name": "MUSTAFA KEMAL ATATÜRK",
+  "life": "1881—1938",
+  "field": "民族独立 · 国家建构",
+  "tagline": "利用帝国任命，还是公开转向全国抵抗运动",
+  "accent": "turquoise",
+  "archive_scale": "电报、军政文件、议会档案与《演说》全文",
+  "status": "研究原型",
+  "method_note": "1927年的《演说》是一份规模巨大的第一人称材料，但它是胜利后的政治自述。切片必须用1919年电报和共同签署文件校正其后见叙事。",
+  "slices": [
+    {
+      "slice_id": "ataturk-1919-amasya",
+      "date": "1919-06-22",
+      "date_label": "1919年6月",
+      "title": "阿马西亚通告形成前夕",
+      "question": "应继续以奥斯曼军队监察官身份执行有限治安任务，还是联络地方抵抗力量并召集全国代表大会？",
+      "context": "奥斯曼帝国战败、协约国占领多地。凯末尔以第九军监察官身份抵达安纳托利亚，同时与军官和地方组织建立加密通信。",
+      "known_at_cutoff": ["伊斯坦布尔政府在占领压力下行动空间狭窄。", "各地已经出现分散的保卫权利组织和抗议集会。", "监察官身份暂时提供通信、旅行与联络军队的合法便利。"],
+      "unknown_at_cutoff": ["军队指挥官会在多大范围支持公开抵抗。", "政府何时会撤职并下令逮捕。", "地方组织能否接受全国性代表机构的协调。"],
+      "tensions": ["帝国合法职位 vs 独立政治组织", "地方抵抗 vs 全国统一", "秘密联络 vs 公开宣言"],
+      "hypotheses": [
+        {"hypothesis_id": "national-congress", "label": "发布通告并召集全国代表大会", "probability": 0.6, "basis": "此前电报已开始协调军地力量，而地方支持使全国组织方案具备现实基础。", "evidence_ids": ["ataturk-e1", "ataturk-e2"]},
+        {"hypothesis_id": "inspector-only", "label": "保留监察官身份并避免公开决裂", "probability": 0.23, "basis": "能延长合法行动窗口，但难以整合正在扩大的占领抵抗。", "evidence_ids": ["ataturk-e2"]},
+        {"hypothesis_id": "foreign-mandate", "label": "转而寻求外国委任统治保障", "probability": 0.17, "basis": "当时确有相关政治主张，却与通告前逐渐成形的民族主权方案冲突。", "evidence_ids": ["ataturk-e1"]}
+      ],
+      "evidence": [
+        {"evidence_id": "ataturk-e1", "date": "1919-05—06", "kind": "电报与行动年表", "proximity": "同期记录汇编", "summary": "官方年表记录其抵达、加密联络军官、要求组织反占领集会及逐步形成全国协调的过程。", "source_title": "土耳其文化与旅游部：1919年表", "source_url": "https://www.ktb.gov.tr/EN-103930/1919.html", "confidence": "中高"},
+        {"evidence_id": "ataturk-e2", "date": "1919-06-22", "kind": "共同签署通告", "proximity": "同期直接材料", "summary": "土耳其大国民议会档案收录阿马西亚通告影像，文件由多名运动领导者共同形成，不能简化为单人意志。", "source_title": "TBMM：建国阶段文件集", "source_url": "https://cdn.tbmm.gov.tr/TbmmWeb/Yayinlar/Dosya/5a520fa7-b855-43dd-bd15-018672b83118.pdf", "confidence": "高"},
+        {"evidence_id": "ataturk-e3", "date": "1927", "kind": "胜利后政治自述", "proximity": "后见第一人称材料", "summary": "《演说》系统回顾1919年以来的选择，但写于国家建立之后，应作为解释来源而非同期内心真值。", "source_title": "Nutuk 官方数字平台", "source_url": "https://nutuk.gov.tr/", "confidence": "中"}
+      ]
+    }
+  ]
+}

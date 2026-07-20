@@ -133,6 +133,9 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .accent-gold { --row-accent: #c2a535; --accent: #9f8420; }
 .accent-cyan { --row-accent: #309e9f; --accent: #237c7d; }
 .accent-jade { --row-accent: #3d9872; --accent: #287859; }
+.accent-ocean { --row-accent: #397ca3; --accent: #2c6688; }
+.accent-turquoise { --row-accent: #2c9b93; --accent: #21786f; }
+.accent-forest { --row-accent: #558654; --accent: #3f6f42; }
 
 .figure-dossier { --accent: var(--red); min-width: 0; padding: clamp(25px, 4vw, 58px); }
 .dossier-loading { min-height: 400px; display: grid; place-items: center; color: var(--muted); font-family: var(--serif); }

@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "figure_id": "liliuokalani",
+  "name": "利留卡拉尼女王",
+  "native_name": "LILIʻUOKALANI",
+  "life": "1838—1917",
+  "field": "夏威夷主权 · 殖民遭遇",
+  "tagline": "面对武装政变，抵抗、退让还是诉诸国际法",
+  "accent": "ocean",
+  "archive_scale": "王室文件、1893年日记、抗议信件与多语种报刊",
+  "status": "研究原型",
+  "method_note": "这一切片把夏威夷王室材料、政变方报刊和美国外交调查分开，避免只用吞并后的胜利者叙事解释女王的选择。",
+  "slices": [
+    {
+      "slice_id": "liliuokalani-1893-overthrow",
+      "date": "1893-01-17",
+      "date_label": "1893年1月",
+      "title": "政变与有条件退让",
+      "question": "美国军队在檀香山登陆、临时政府宣布成立时，应立即武装抵抗，还是暂时退让并把主权争议交给美国政府裁断？",
+      "context": "女王此前尝试推动新宪法以恢复王室和本地选民权力，遭到内阁反对；政变委员会随后行动，美国海军陆战队已在城内出现。",
+      "known_at_cutoff": ["王室武装规模有限，城市中的美军存在改变了力量判断。", "新宪法计划已经因内阁反对暂缓。", "政变方试图迅速取得外交承认和政府设施。"],
+      "unknown_at_cutoff": ["美国总统是否会否定驻夏威夷代表的行动。", "抵抗会造成多大伤亡，以及美军是否直接参战。", "暂时退让能否保留恢复王国的法律与外交空间。"],
+      "tensions": ["主权抵抗 vs 避免流血", "当场控制 vs 国际法申诉", "君主权威 vs 内阁与外部力量"],
+      "hypotheses": [
+        {"hypothesis_id": "conditional-yield", "label": "有条件退让并向美国政府申诉", "probability": 0.58, "basis": "兵力不对称和美军存在使避免流血成为高权重目标，而正式抗议仍可保留主权主张。", "evidence_ids": ["liliu-e1", "liliu-e2"]},
+        {"hypothesis_id": "armed-resistance", "label": "命令王室部队立即抵抗", "probability": 0.24, "basis": "能拒绝政变既成事实，但极可能触发城市战斗并面对美军介入风险。", "evidence_ids": ["liliu-e2"]},
+        {"hypothesis_id": "unconditional-abdication", "label": "无条件放弃王位与主权主张", "probability": 0.18, "basis": "最能降低即时伤亡，却与女王持续提出的正式抗议和恢复诉求不一致。", "evidence_ids": ["liliu-e1"]}
+      ],
+      "evidence": [
+        {"evidence_id": "liliu-e1", "date": "1893", "kind": "女王日记", "proximity": "同期私人记录", "summary": "夏威夷州数字档案保存女王贯穿1893年的日记，可与后来出版的回忆叙述互相校验。", "source_title": "Digital Archives of Hawaiʻi：Liliʻuokalani Diary", "source_url": "https://digitalarchives.hawaii.gov/browse/parent/ark%3A70111/1Gkq", "confidence": "高"},
+        {"evidence_id": "liliu-e2", "date": "1893-01", "kind": "外交调查文件", "proximity": "同期多方材料汇编", "summary": "美国外交文件记录新宪法暂缓、政变方占领设施、美军存在与女王退让的先后关系。", "source_title": "美国国务院历史办公室：Hawaiian Islands Documents", "source_url": "https://history.state.gov/historicaldocuments/frus1894app2/ch7subch1", "confidence": "中高"},
+        {"evidence_id": "liliu-e3", "date": "1893", "kind": "对立报刊", "proximity": "同期公开材料", "summary": "亲临时政府报纸把恢复王国的行动描述为非法；这种带立场材料用于构造反证，而非直接当作事实。", "source_title": "美国国会图书馆：The Hawaiian Gazette", "source_url": "https://www.loc.gov/item/sn83025121/", "confidence": "中"}
+      ]
+    }
+  ]
+}
